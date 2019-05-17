@@ -3,7 +3,7 @@ services:
 
   webapp-service:
     image: node:8.11.4-slim
-    container_name: comunication-webapp
+    container_name: communication-webapp
     user: "node"
     working_dir: /home/node/app
     volumes:
@@ -21,9 +21,9 @@ services:
       #- NODE_ENV=production
 
   api-service:
-    container_name: comunication-api
+    container_name: communication-api
     #build: ./api
-    image: culturagovbr/comunication-php-fpm:1.0.1
+    image: culturagovbr/communication-php-fpm:1.1.0
     working_dir: /application
     volumes:
       - ./api:/application
@@ -32,7 +32,7 @@ services:
       #- UPDATE_COMPOSER_DEPENDENCIES=true
       - USE_PHP_FPM=true
       - DB_CONNECTION=pgsql
-      - DB_HOST=comunication-database
+      - DB_HOST=communication-database
       - DB_PORT=5432
       - DB_DATABASE=notificacao
       - DB_USERNAME=notificacao
@@ -42,7 +42,7 @@ services:
 
   webserver-service:
     image: nginx:alpine
-    container_name: comunication-webserver
+    container_name: communication-webserver
     working_dir: /application
     volumes:
       - ./api:/application
@@ -55,8 +55,8 @@ services:
 
   websocket-service:
     build: ./websocket
-    image: comunication-websocket-nodejs:1.0.1
-    container_name: comunication-websocket
+    image: communication-websocket-nodejs:1.0.1
+    container_name: communication-websocket
     ports:
       - "8001:8001"
     depends_on:
@@ -64,7 +64,7 @@ services:
 
   database-service:
     image: postgres:10
-    container_name: comunication-database
+    container_name: communication-database
     environment:
       - POSTGRES_PASSWORD=senhaNotificacao
       - POSTGRES_USER=notificacao
