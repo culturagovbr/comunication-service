@@ -2,7 +2,7 @@ version: '2'
 services:
 
   webapp-service:
-    build: ./webapp
+#    build: ./webapp
     image: culturagovbr/communication-webapp:1.0.1
     container_name: communication-webapp
     volumes:
@@ -21,7 +21,7 @@ services:
 
   api-service:
     container_name: communication-api
-    build: ./api
+#    build: ./api
     image: culturagovbr/communication-php-fpm:1.2.0
     working_dir: /application
     volumes:
@@ -70,8 +70,8 @@ services:
     - api-service
 
   websocket-service:
-    build: ./websocket
-    image: communication-websocket-nodejs:1.0.1
+#    build: ./websocket
+    image: culturagovbr/communication-websocket-nodejs:1.0.1
     container_name: communication-websocket
     ports:
     - "8001:8001"
