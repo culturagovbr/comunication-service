@@ -1,10 +1,10 @@
 FROM node:8.11.4-slim
-
+RUN echo "*"
 RUN mkdir -p /home/node/app/node_modules && chown -R node:node /home/node/app
 WORKDIR "/home/node/app"
 USER "node"
-COPY --chown=node:node ./webapp /home/node/app
-COPY --chown=node:node ./webapp/docker/docker-entrypoint.sh /usr/local/bin/
+COPY --chown=node:node . /home/node/app
+COPY --chown=node:node ./docker/docker-entrypoint.sh /usr/local/bin/
 RUN npm install
 EXPOSE 8080
 
