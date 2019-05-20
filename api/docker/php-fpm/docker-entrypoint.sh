@@ -8,7 +8,7 @@ if [ "$UPDATE_COMPOSER_DEPENDENCIES" == "true" ]; then
     composer update --prefer-source --no-interaction
 fi
 
-if  ! [ -e "/application/.env" ] && [ -e "/application/.env.example" ] ; then
+#if  ! [ -e "/application/.env" ] ; then
     echo "[ ****************** ] Copying sample application configuration to real one"
     cp /application/.env.example /application/.env
 
@@ -35,7 +35,7 @@ if  ! [ -e "/application/.env" ] && [ -e "/application/.env.example" ] ; then
     sed -i "s/@@MAIL_ENCRYPTION@@/$MAIL_ENCRYPTION/g" /application/.env
     sed -i "s/@@MAIL_FROM_ADDRESS@@/$MAIL_FROM_ADDRESS/g" /application/.env
     sed -i "s/@@MAIL_FROM_NAME@@/$MAIL_FROM_NAME/g" /application/.env
-fi
+#fi
 
 echo "[ ****************** ] Ending Endpoint of Application"
 

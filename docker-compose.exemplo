@@ -3,7 +3,7 @@ services:
 
   webapp-service:
 #    build: ./webapp
-    image: culturagovbr/communication-webapp:1.0.1
+    image: culturagovbr/communication-webapp:1.0.2
     container_name: communication-webapp
     volumes:
     - ./webapp:/home/node/app
@@ -14,15 +14,18 @@ services:
     environment:
     - NODE_CONFIG_ENV=development
     - NODE_ENV=development
-    - WEBSOCKET_HOST=localhost
-    - WEBSOCKET_PORT=8081
     #- NODE_CONFIG_ENV=production
     #- NODE_ENV=production
+    - VUE_APP_API_HOST=localhost
+    - VUE_APP_API_PORT=88
+    - VUE_APP_WEBSOCKET_HOST=localhost
+    - VUE_APP_WEBSOCKET_PORT=8001
+    - VUE_APP_JWT_SECRET=SDfsdfQWEFwefWEfEtWERQWasdQWEs
 
   api-service:
     container_name: communication-api
 #    build: ./api
-    image: culturagovbr/communication-php-fpm:1.2.0
+    image: culturagovbr/communication-php-fpm:1.2.1
     working_dir: /application
     volumes:
     - ./api:/application
@@ -52,7 +55,7 @@ services:
     - MAIL_PASSWORD=
     - MAIL_ENCRYPTION=tls
     - MAIL_FROM_ADDRESS=hello@example.com
-    - MAIL_FROM_NAME="Example app"
+    - MAIL_FROM_NAME=Example app
     depends_on:
     - database-service
 
