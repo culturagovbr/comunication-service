@@ -2,78 +2,77 @@ version: '2'
 services:
 
   webapp-service:
-    image: node:8.11.4-slim
+    build: ./webapp
+    image: culturagovbr/communication-webapp:1.0.1
     container_name: communication-webapp
-    user: "node"
-    working_dir: /home/node/app
     volumes:
-      - ./webapp:/home/node/app
+    - ./webapp:/home/node/app
     command:
       sh -c 'npm i && npm run serve'
     ports:
-      - "8088:8080"
+    - "8088:8080"
     environment:
-      - NODE_CONFIG_ENV=development
-      - NODE_ENV=development
-      - WEBSOCKET_HOST=localhost
-      - WEBSOCKET_PORT=8081
-      #- NODE_CONFIG_ENV=production
-      #- NODE_ENV=production
+    - NODE_CONFIG_ENV=development
+    - NODE_ENV=development
+    - WEBSOCKET_HOST=localhost
+    - WEBSOCKET_PORT=8081
+    #- NODE_CONFIG_ENV=production
+    #- NODE_ENV=production
 
   api-service:
     container_name: communication-api
-    #build: ./api
+    build: ./api
     image: culturagovbr/communication-php-fpm:1.1.0
     working_dir: /application
     volumes:
-      - ./api:/application
-      - ./api/docker/php-fpm/php-ini-overrides.ini:/etc/php/7.2/fpm/conf.d/99-overrides.ini
+    - ./api:/application
+    - ./api/docker/php-fpm/php-ini-overrides.ini:/etc/php/7.2/fpm/conf.d/99-overrides.ini
     environment:
-      #- UPDATE_COMPOSER_DEPENDENCIES=true
-      - USE_PHP_FPM=true
-      - DB_CONNECTION=pgsql
-      - DB_HOST=communication-database
-      - DB_PORT=5432
-      - DB_DATABASE=notificacao
-      - DB_USERNAME=notificacao
-      - DB_PASSWORD=senhaNotificacao
+    #- UPDATE_COMPOSER_DEPENDENCIES=true
+    - USE_PHP_FPM=true
+    - DB_CONNECTION=pgsql
+    - DB_HOST=communication-database
+    - DB_PORT=5432
+    - DB_DATABASE=notificacao
+    - DB_USERNAME=notificacao
+    - DB_PASSWORD=senhaNotificacao
     depends_on:
-      - database-service
+    - database-service
 
   webserver-service:
     image: nginx:alpine
     container_name: communication-webserver
     working_dir: /application
     volumes:
-      - ./api:/application
-      - ./webserver/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    - ./api:/application
+    - ./webserver/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
     ports:
-      - "88:80"
-      - "81:80"
+    - "88:80"
+    - "81:80"
     depends_on:
-      - api-service
+    - api-service
 
   websocket-service:
     build: ./websocket
     image: communication-websocket-nodejs:1.0.1
     container_name: communication-websocket
     ports:
-      - "8001:8001"
+    - "8001:8001"
     depends_on:
-      - api-service
+    - api-service
 
   database-service:
     image: postgres:10
     container_name: communication-database
     environment:
-      - POSTGRES_PASSWORD=senhaNotificacao
-      - POSTGRES_USER=notificacao
-      - POSTGRES_DB=notificacao
-      - POSTGRES_DB_TEST=notificacao-test
+    - POSTGRES_PASSWORD=senhaNotificacao
+    - POSTGRES_USER=notificacao
+    - POSTGRES_DB=notificacao
+    - POSTGRES_DB_TEST=notificacao-test
     ports:
-      - "5432:5432"
+    - "5432:5432"
     expose:
-      - "5432"
+    - "5432"
     volumes:
-      - ./database/docker-data/postgres:/var/lib/postgresql/data
-      - ./database/schema.sql:/docker-entrypoint-initdb.d/0.schema.sql
+    - ./database/docker-data/postgres:/var/lib/postgresql/data
+    - ./database/schema.sql:/docker-entrypoint-initdb.d/0.schema.sql
