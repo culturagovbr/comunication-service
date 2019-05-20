@@ -20,16 +20,18 @@
                                     v-model="valid"
                                     @submit.prevent="submit()">
                                     <v-text-field
-                                        v-model="email"
-                                        :rules="emailRules"
+                                        v-validate="'required'"
+                                        :mask="'###.###.###-##'"
+                                        v-model="cpf"
+                                        :rules="[rules.required, rules.minLengthCPF]"
                                         prepend-icon="person"
-                                        label="E-mail"
-                                        type="email"
-                                        name="email"
-                                        required />
+                                        label="CPF"
+                                        class="form-control"
+                                        required
+                                    />
                                     <v-text-field
                                         v-model="password"
-                                        :rules="passwordRules"
+                                        :rules="[rules.password]"
                                         prepend-icon="lock"
                                         type="password"
                                         label="Senha"
@@ -92,15 +94,12 @@ import { mapState, mapActions } from 'vuex';
 export default {
     data() {
         return {
-            email: '',
-            emailRules: [
-                v => !!v || 'E-mail obrigatório',
-                v => /.+@.+/.test(v) || 'E-mail precisa ser válido',
-            ],
+            cpf: '',
             password: '',
-            passwordRules: [
-                v => !!v || 'Senha obrigatória',
-            ],
+            rules: {
+                minLengthCPF: object => object.length === 11 || 'Campo obrigatório.',
+                password: object => !!object || 'Senha obrigatória',
+            },
             valid: true,
         };
     },
@@ -117,9 +116,9 @@ export default {
     methods: {
         submit() {
             if (this.$refs.form.validate()) {
-                const { email, password } = this;
-                if (email && password) {
-                    this.login({ email, password }).then((response) => {
+                const { cpf, password } = this;
+                if (cpf && password) {
+                    this.login({ cpf, password }).then((response) => {
                         if (response != null && response.data && response.data.data && response.data.data.token) {
                             this.$router.push('/');
                         }
