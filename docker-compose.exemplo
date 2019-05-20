@@ -22,7 +22,7 @@ services:
   api-service:
     container_name: communication-api
     build: ./api
-    image: culturagovbr/communication-php-fpm:1.1.0
+    image: culturagovbr/communication-php-fpm:1.2.0
     working_dir: /application
     volumes:
     - ./api:/application
@@ -31,11 +31,28 @@ services:
     #- UPDATE_COMPOSER_DEPENDENCIES=true
     - USE_PHP_FPM=true
     - DB_CONNECTION=pgsql
-    - DB_HOST=communication-database
+    - APP_ENV=local
+    - APP_DEBUG=true
+    - APP_KEY=
+    - APP_TIMEZONE=UTC
+    - LOG_CHANNEL=stack
+    - LOG_SLACK_WEBHOOK_URL=
+    - DB_HOST=database-service
     - DB_PORT=5432
     - DB_DATABASE=notificacao
     - DB_USERNAME=notificacao
     - DB_PASSWORD=senhaNotificacao
+    - CACHE_DRIVER=file
+    - QUEUE_DRIVER=sync
+    - JWT_SECRET=SDfsdfQWEFwefWEfEtWERQWasdQWEs
+    - MAIL_DRIVER=smtp
+    - MAIL_HOST=smtp.mailtrap.io
+    - MAIL_PORT=2525
+    - MAIL_USERNAME=
+    - MAIL_PASSWORD=
+    - MAIL_ENCRYPTION=tls
+    - MAIL_FROM_ADDRESS=hello@example.com
+    - MAIL_FROM_NAME="Example app"
     depends_on:
     - database-service
 
