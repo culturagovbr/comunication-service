@@ -15,11 +15,11 @@
                                 <v-card-title light>
                                     <span class="headline">{{ formTitle }} Notificação</span>
                                 </v-card-title>
-                            <v-card-text>
-                                <notificacao-formulario
-                                    :item="itemEditado"
-                                    :dialog.sync="dialog"/>
-                            </v-card-text>
+                                <v-card-text>
+                                    <notificacao-formulario
+                                        :item="itemEditado"
+                                        :dialog.sync="dialog"/>
+                                </v-card-text>
 
                             </v-card>
 
@@ -175,10 +175,10 @@ export default {
             return this.itemEditado.notificacao_id === null ? 'Criar' : 'Editar';
         },
         ...mapGetters({
-            notificacoes: 'notificacao/notificacoes',
-            contas: 'conta/conta',
-            plataformas: 'plataforma/plataforma',
-            informacoesConta: 'account/informacoesConta',
+            notificacoes: 'communicationNotificacao/notificacoes',
+            contas: 'communicationConta/conta',
+            plataformas: 'communicationPlataforma/plataforma',
+            informacoesConta: 'communicationAccount/informacoesConta',
         }),
     },
     watch: {
@@ -233,10 +233,10 @@ export default {
     },
     methods: {
         ...mapActions({
-            obterNotificacoes: 'notificacao/obterNotificacoes',
-            obterContas: 'conta/obterContas',
-            obterPlataformas: 'plataforma/obterPlataformas',
-            removerNotificacao: 'notificacao/removerNotificacao',
+            obterNotificacoes: 'communicationNotificacao/obterNotificacoes',
+            obterContas: 'communicationConta/obterContas',
+            obterPlataformas: 'communicationPlataforma/obterPlataformas',
+            removerNotificacao: 'communicationNotificacao/removerNotificacao',
         }),
         newItem() {
             this.itemEditado = Object.assign({}, this.defaultItem);
@@ -252,7 +252,7 @@ export default {
                 return false;
             }
             if (this.informacoesConta.is_admin !== true) {
-                this.$store.dispatch('alert/error', 'Usuário sem privilégios administrativos.', { root: true });
+                this.$store.dispatch('communicationAlert/error', 'Usuário sem privilégios administrativos.', { root: true });
                 return false;
             }
             return this.removerNotificacao(item.notificacao_id);

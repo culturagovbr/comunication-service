@@ -30,9 +30,19 @@
                                     />
                                     <v-text-field
                                         v-validate="'required'"
+                                        :mask="'###.###.###-##'"
+                                        v-model="user.cpf"
+                                        :rules="[rules.required, rules.minLengthCPF]"
+                                        prepend-icon="person"
+                                        label="CPF"
+                                        class="form-control"
+                                        required
+                                    />
+                                    <v-text-field
+                                        v-validate="'required'"
                                         v-model="user.email"
                                         :rules="[rules.required, rules.email, rules.minLength]"
-                                        prepend-icon="person"
+                                        prepend-icon="email"
                                         label="E-mail"
                                         class="form-control"
                                         required
@@ -52,7 +62,7 @@
                                         sm6
                                         md12>
                                         <h3> Sistemas </h3>
-                                        <v-list style="overflow: auto; max-height: 300px">
+                                        <v-list style="overflow: auto; max-height: 250px">
                                             <v-list-tile
                                                 v-for="sistema in sistemas"
                                                 :key="sistema.sistema_id"
@@ -97,12 +107,15 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from 'vuex';
+import { TheMask } from 'vue-the-mask';
 
 export default {
+    components: { TheMask },
     data() {
         return {
             user: {
                 nome: '',
+                cpf: '',
                 email: '',
                 password: '',
                 sistemas: [],
@@ -111,6 +124,7 @@ export default {
             rules: {
                 required: value => !!value || 'Campo obrigatório.',
                 minLength: object => object.length > 5 || 'Campo obrigatório.',
+                minLengthCPF: object => object.length === 11 || 'Campo obrigatório.',
                 email: (value) => {
                     // eslint-disable-next-line
                     const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -120,9 +134,9 @@ export default {
         };
     },
     computed: {
-        ...mapState('account', ['status']),
+        ...mapState('communicationAccount', ['status']),
         ...mapGetters({
-            sistemas: 'sistema/sistema',
+            sistemas: 'communicationSistema/sistema',
         }),
     },
     mounted() {
@@ -132,13 +146,15 @@ export default {
     },
     methods: {
         ...mapActions({
-            registrar: 'account/registrar',
-            enviarEmail: 'conta/enviarEmail',
-            obterSistemas: 'sistema/obterSistemas',
+            registrar: 'communicationAccount/registrar',
+            enviarEmail: 'communicationConta/enviarEmail',
+            obterSistemas: 'communicationSistema/obterSistemas',
         }),
         tratarSubmissao() {
             if (this.$refs.form.validate() && this.user.sistemas.length > 0) {
-                this.registrar(this.user);
+                this.registrar(this.user).then(() => {
+                    this.$router.push('/login');
+                });
                 this.enviarEmail(this.user);
             }
         },

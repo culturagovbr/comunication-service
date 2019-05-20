@@ -16,6 +16,7 @@ class Conta implements IService
             'usuario_id',
             'nome',
             'email',
+            'cpf',
             'is_ativo',
             'is_admin'
         );
@@ -34,6 +35,7 @@ class Conta implements IService
         try {
             $validator = Validator::make($dados, [
                 "nome" => 'required|string|min:3|max:50',
+                "cpf" => 'required|string|min:11|max:11',
                 "email" => 'required|string|min:3|max:50',
                 "password" => 'required|string|min:3|max:50',
                 "sistemas" => 'array',
@@ -52,6 +54,17 @@ class Conta implements IService
             )->get();
             if (count($usuarioExistente->toArray()) > 0) {
                 throw new \Exception("E-mail já cadastrado.");
+            }
+
+            /**
+             * @var $usuarioExistente \Illuminate\Database\Eloquent\Collection
+             */
+            $usuarioExistente = ModeloUsuario::where(
+                'cpf',
+                $dados['cpf']
+            )->get();
+            if (count($usuarioExistente->toArray()) > 0) {
+                throw new \Exception("CPF já cadastrado.");
             }
 
             $dados = array_merge($dados, [
@@ -85,7 +98,7 @@ class Conta implements IService
     {
         $validator = Validator::make($dados, [
             "nome" => 'required|string|min:3|max:50',
-            "email" => 'required|string|min:3|max:50'
+            "email" => 'required|string|min:3|max:50',
         ]);
         if ($validator->fails()) {
             throw new \Exception($validator->errors()->first());
@@ -184,9 +197,9 @@ class Conta implements IService
 
     public function autenticar(\Illuminate\Http\Request $request): ?ModeloUsuario
     {
-        $email = $request->input('email');
-        if (empty($email)) {
-            throw new \Exception('Item `email` não informado.');
+        $cpf = $request->input('cpf');
+        if (empty($cpf)) {
+            throw new \Exception('Item `cpf` não informado.');
         }
 
         $senha = $request->input('password');
@@ -195,8 +208,8 @@ class Conta implements IService
         }
 
         $usuarioExistente = ModeloUsuario::where(
-            'email',
-            $email
+            'cpf',
+            $cpf
         )->first();
         if (!$usuarioExistente) {
             return null;
@@ -209,7 +222,7 @@ class Conta implements IService
         $senhaBanco = $usuarioExistente->password;
 
         if (!$this->validarSenha($senha, $senhaBanco)) {
-            throw new \Exception('Email ou senha incorretos.');
+            throw new \Exception('CPF ou senha incorretos.');
         }
 
         return $usuarioExistente;
@@ -220,9 +233,12 @@ class Conta implements IService
     {
         try {
             $usuario = $this->autenticar($request);
-
+            $post = $request->post();
             if (is_null($usuario)) {
-                $usuario = $this->criar($request->post());
+                if (!isset($post['nome'])) {
+                    throw new \Exception('Usuario inexistente.');
+                }
+                $usuario = $this->criar($post);
             }
 
             return $usuario;

@@ -167,9 +167,12 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
+import WebSocketMixins from './_auxiliares/mixins';
 
 export default {
     name: 'Chat',
+    mixins: [WebSocketMixins],
+
     data() {
         return {
             isEnviando: false,
@@ -183,10 +186,9 @@ export default {
 
     computed: {
         ...mapGetters({
-            nomeSalaAtual: 'websocket/nomeSalaAtual',
-            salas: 'websocket/salas',
-            indiceSalaAtual: 'websocket/indiceSalaAtual',
-            informacoesConta: 'account/informacoesConta',
+            nomeSalaAtual: 'communicationWebsocket/nomeSalaAtual',
+            salas: 'communicationWebsocket/salas',
+            indiceSalaAtual: 'communicationWebsocket/indiceSalaAtual',
         }),
 
         hasMembrosNaSalaAtual() {
@@ -205,26 +207,20 @@ export default {
             return membrosSalaAtual.length > 0;
         },
     },
-    watch: {
-        informacoesConta() {
-            this.sistemas = [];
-            this.sistemas.push(this.informacoesConta.sistemas);
-        },
-    },
     mounted() {
         this.sistemas = this.informacoesConta.sistemas;
     },
     methods: {
         ...mapActions({
-            entrarEmSala: 'websocket/Socket_serverEntrarEmSala',
-            mensagemSala: 'websocket/Socket_serverMensagemSala',
-            definirNomeSalaAtual: 'websocket/definirNomeSalaAtual',
+            entrarEmSalaWebsocket: 'communicationWebsocket/Socket_serverEntrarEmSala',
+            mensagemSalaWebsocket: 'communicationWebsocket/Socket_serverMensagemSala',
+            definirNomeSalaAtual: 'communicationWebsocket/definirNomeSalaAtual',
         }),
 
         entrarEmSala() {
             const self = this;
 
-            this.entrarEmSala({
+            this.entrarEmSalaWebsocket({
                 sala: self.sistema.sistema_id,
             });
             this.definirNomeSalaAtual({
@@ -235,7 +231,7 @@ export default {
         enviarMensagem(evento) {
             const self = this;
 
-            this.mensagemSala({
+            this.mensagemSalaWebsocket({
                 sala: self.sistema.sistema_id,
                 mensagem: self.mensagem,
             });

@@ -30,6 +30,7 @@ class JWT implements IService
             'user' => [
                 'user_id' => $usuario->usuario_id,
                 'name' => $usuario->nome,
+                'cpf' => $usuario->cpf,
                 'email' => $usuario->email,
                 'sistemas' => $usuario->sistemas,
                 'is_admin' => $usuario->is_admin,

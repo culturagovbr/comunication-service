@@ -38,24 +38,42 @@
                                         required />
 
                                     <v-card-actions>
-                                        <!--<v-btn @click="clear">Limpar</v-btn>-->
-                                        <!--<v-spacer></v-spacer>-->
+                                        <v-layout
+                                            justify-center
+                                            column
+                                            fill-height>
 
-                                    <v-btn
-                                        :disabled="!valid"
-                                        color="primary"
-                                        type="submit"> Entrar
-                                    </v-btn>
-                                    <router-link
-                                        to="/cadastrar"
-                                        class="btn btn-link"
-                                        style="margin-left: 20px"
-                                    >Cadastre-se</router-link>
-                                    <router-link
-                                        to="/recuperar"
-                                        class="btn btn-link"
-                                        style="margin-left: 20px"
-                                    >Esqueci minha senha</router-link>
+                                            <div class="text-xs-right btn-link mt-3">
+                                                <v-btn
+                                                    to="/recuperar"
+                                                    flat
+                                                    class="caption"
+                                                    small
+                                                    color="primary">Recuperar senha</v-btn>
+                                            </div>
+
+                                            <v-btn
+                                                :disabled="!valid"
+                                                color="primary"
+                                                block
+                                                type="submit"> Entrar
+                                            </v-btn>
+                                            <v-divider class="mt-2 mb-2" />
+                                            <v-tooltip
+                                                bottom
+                                                class="text-xs-center btn btn-link">
+                                                <v-btn
+                                                    slot="activator"
+                                                    flat
+                                                    large
+                                                    color="warning"
+                                                    to="/cadastrar"
+                                                >Cadastre-se</v-btn>
+                                                <span>Ir para a tela de cadastro</span>
+                                            </v-tooltip>
+
+
+                                        </v-layout>
 
                                     </v-card-actions>
                                 </v-form>
@@ -87,7 +105,7 @@ export default {
         };
     },
     computed: {
-        ...mapState('account', [
+        ...mapState('communicationAccount', [
             'status',
             'loggingIn',
         ]),
@@ -101,14 +119,18 @@ export default {
             if (this.$refs.form.validate()) {
                 const { email, password } = this;
                 if (email && password) {
-                    this.login({ email, password });
+                    this.login({ email, password }).then((response) => {
+                        if (response != null && response.data && response.data.data && response.data.data.token) {
+                            this.$router.push('/');
+                        }
+                    });
                 }
             }
         },
         clear() {
             this.$refs.form.reset();
         },
-        ...mapActions('account', [
+        ...mapActions('communicationAccount', [
             'login',
             'logout',
         ]),

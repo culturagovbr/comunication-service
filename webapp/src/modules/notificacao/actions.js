@@ -1,6 +1,8 @@
 import * as types from './types';
 import { requisicaoAutorizada } from '../account/_auxiliares/requisicao-autorizada';
 
+export const storeInit = () => {};
+
 export const obterNotificacoes = ({ dispatch, commit }, params) => {
     let url = `http://${process.env.VUE_APP_API_HOST}:${process.env.VUE_APP_API_PORT}/v1/notificacao-usuario/${params.usuarioId}`;
     if (params.isNotificacaoLida != null) {
@@ -13,7 +15,7 @@ export const obterNotificacoes = ({ dispatch, commit }, params) => {
             commit(types.DEFINIR_NOTIFICACOES_BADGE, data);
         })
         .catch((error) => {
-            dispatch('alert/error', error.response.data.error, {
+            dispatch('communicationAlert/error', error.response.data.error, {
                 root: true,
             });
         });
@@ -24,7 +26,7 @@ export const removerNotificacao = ({ dispatch, commit }, notificacaoId) => requi
         commit(types.REMOVER_NOTIFICACAO, notificacaoId);
         commit(types.REMOVER_NOTIFICACAO_BADGE, notificacaoId);
     }).catch((error) => {
-        dispatch('alert/error', error.response.data.error, {
+        dispatch('communicationAlert/error', error.response.data.error, {
             root: true,
         });
     });
@@ -34,9 +36,9 @@ export const cadastrarNotificacao = ({ dispatch, commit }, notificacao) => requi
         const { data } = response;
         commit(types.ACRESCENTAR_NOTIFICACAO, data.data);
         commit(types.ACRESCENTAR_NOTIFICACAO_BADGE, data.data);
-        dispatch('alert/success', 'Cadastro realizado com sucesso!', { root: true });
+        dispatch('communicationAlert/success', 'Cadastro realizado com sucesso!', { root: true });
     }).catch((error) => {
-        dispatch('alert/error', error.response.data.error, {
+        dispatch('communicationAlert/error', error.response.data.error, {
             root: true,
         });
     });
@@ -47,7 +49,7 @@ export const atualizarNotificacao = ({ dispatch, commit }, notificacao) => requi
         commit(types.ATUALIZAR_NOTIFICACAO_BADGE, notificacao);
     })
     .catch((error) => {
-        dispatch('alert/error', error.response.data.error, {
+        dispatch('communicationAlert/error', error.response.data.error, {
             root: true,
         });
     });
@@ -59,7 +61,7 @@ export const lerNotificacao = ({ dispatch, commit }, notificacao) => requisicaoA
         commit(types.ATUALIZAR_NOTIFICACAO_BADGE, data);
     })
     .catch((error) => {
-        dispatch('alert/error', error.response.data.error, {
+        dispatch('communicationAlert/error', error.response.data.error, {
             root: true,
         });
     });

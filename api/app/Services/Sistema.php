@@ -83,8 +83,10 @@ class Sistema implements IService
             ->where('notificacao.mensagem.sistema_id', $sistema_id)
             ->latest()
             ->first();
-        if($mensagem) {
-            throw new \Exception("O sistema está vinculado com a mensagem '{$mensagem->titulo}''");
+        if ($mensagem) {
+            throw new \Exception(
+                "O sistema está vinculado com a mensagem '{$mensagem->titulo}''"
+            );
         }
 
         $usuarioSistemas = DB::table('notificacao.usuario_has_sistema')
@@ -92,14 +94,25 @@ class Sistema implements IService
                 'notificacao.usuario.nome',
                 'notificacao.usuario.email',
             ])
-            ->join('notificacao.usuario', 'notificacao.usuario_has_sistema.usuario_id', '=', 'notificacao.usuario.usuario_id')
-            ->where('notificacao.usuario_has_sistema.sistema_id', '=', $sistema_id)->first();
-        if($usuarioSistemas) {
-            throw new \Exception("O sistema está vinculado ao usuário '{$usuarioSistemas->nome}' <{$usuarioSistemas->email}>'");
+            ->join(
+                'notificacao.usuario',
+                'notificacao.usuario_has_sistema.usuario_id',
+                '=',
+                'notificacao.usuario.usuario_id'
+            )
+            ->where(
+                'notificacao.usuario_has_sistema.sistema_id',
+                '=',
+                $sistema_id
+            )->first();
+        if ($usuarioSistemas) {
+            throw new \Exception(
+                "O sistema está vinculado ao usuário '{$usuarioSistemas->nome}' <{$usuarioSistemas->email}>'"
+            );
         }
 
         $sistema = $this->obter($sistema_id);
-        if(!$sistema) {
+        if (!$sistema) {
             throw new \Exception("Sistema não encontrado.");
         }
         return $sistema->delete();

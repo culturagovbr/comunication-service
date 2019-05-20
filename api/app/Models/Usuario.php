@@ -13,7 +13,8 @@ class Usuario extends Model
         'email',
         'password',
         'is_admin',
-        'is_ativo'
+        'is_ativo',
+        'cpf',
     ];
     protected $primaryKey = "usuario_id";
     protected $table = 'notificacao.usuario';

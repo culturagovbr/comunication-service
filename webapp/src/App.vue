@@ -14,40 +14,7 @@
                 v-show="carregando"
                 v-if="status.loggedIn"/>
             <v-spacer/>
-
-
-            <v-scale-transition>
-                <v-tooltip
-                    v-if="status.loggedIn"
-                    bottom>
-                    <v-btn
-                        v-show="isConnected === true"
-                        slot="activator"
-                        small
-                        icon
-                        fab
-                        color="teal">
-                        <v-icon>check</v-icon>
-                    </v-btn>
-                    <span>Conectado</span>
-                </v-tooltip>
-            </v-scale-transition>
-            <v-scale-transition>
-                <v-tooltip
-                    v-if="status.loggedIn"
-                    bottom>
-                    <v-btn
-                        v-show="isConnected === false"
-                        slot="activator"
-                        small
-                        icon
-                        fab
-                        color="warning">
-                        <v-icon>warning</v-icon>
-                    </v-btn>
-                    <span>Desconectado</span>
-                </v-tooltip>
-            </v-scale-transition>
+            <Status />
         </v-toolbar>
 
         <alerta />
@@ -74,6 +41,7 @@ import { mapGetters } from 'vuex';
 import NotificacaoBadge from './modules/notificacao/NotificacaoBadge.vue';
 import BarraLateral from './modules/core/BarraLateral.vue';
 import Alerta from './modules/alert/Alerta.vue';
+import Status from './modules/websocket/Status.vue';
 
 export default {
     name: 'App',
@@ -81,6 +49,7 @@ export default {
         NotificacaoBadge,
         BarraLateral,
         Alerta,
+        Status,
     },
     data() {
         return {
@@ -97,9 +66,9 @@ export default {
     computed: {
 
         ...mapGetters({
-            status: 'account/status',
-            user: 'account/user',
-            isConnected: 'websocket/isConnected',
+            status: 'communicationAccount/status',
+            user: 'communicationAccount/user',
+            isConnected: 'communicationWebsocket/isConnected',
         }),
     },
     mounted() {

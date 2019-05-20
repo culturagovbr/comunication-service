@@ -1,28 +1,29 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import account from '@/modules/account';
-import alert from '@/modules/alert';
-import conta from '@/modules/conta';
-import plataforma from '@/modules/plataforma';
-import sistema from '@/modules/sistema';
-import mensagem from '@/modules/mensagem';
-import notificacao from '@/modules/notificacao';
-import websocket from '@/modules/websocket';
+import communicationAccount from './modules/account';
+import communicationMensagem from './modules/mensagem';
+import communicationNotificacao from './modules/notificacao';
+import communicationPlataforma from './modules/plataforma';
+import communicationSistema from './modules/sistema';
+import communicationWebsocket from './modules/websocket';
+import communicationAlert from './modules/alert';
+import communicationConta from './modules/conta';
+
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
 
     modules: {
-        account,
-        alert,
-        plataforma,
-        sistema,
-        conta,
-        mensagem,
-        notificacao,
-        websocket,
+        communicationAccount,
+        communicationAlert,
+        communicationPlataforma,
+        communicationSistema,
+        communicationConta,
+        communicationMensagem,
+        communicationNotificacao,
+        communicationWebsocket,
     },
     strict: true,
 });

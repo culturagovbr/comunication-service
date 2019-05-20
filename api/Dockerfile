@@ -36,7 +36,7 @@ RUN ln -s /usr/local/bin/composer.phar /usr/local/bin/composer
 
 WORKDIR "/application"
 
-COPY ./api /application
+COPY . /application
 
 COPY ./docker/php-fpm/docker-entrypoint.sh /usr/local/bin/
 ENTRYPOINT ["docker-entrypoint.sh"]
