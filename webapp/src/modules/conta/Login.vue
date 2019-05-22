@@ -110,7 +110,8 @@ export default {
         ]),
     },
     mounted() {
-    // reset login status
+        console.log(this);
+        // reset login status
         this.logout();
     },
     methods: {
@@ -120,7 +121,10 @@ export default {
                 if (cpf && password) {
                     this.login({ cpf, password }).then((response) => {
                         if (response != null && response.data && response.data.data && response.data.data.token) {
+                            this.info('Login realizado com sucesso!');
                             this.$router.push('/');
+                        } else {
+                            this.error('Falha ao realizar login.');
                         }
                     });
                 }
@@ -129,10 +133,12 @@ export default {
         clear() {
             this.$refs.form.reset();
         },
-        ...mapActions('communicationAccount', [
-            'login',
-            'logout',
-        ]),
+        ...mapActions({
+            login: 'communicationAccount/login',
+            logout: 'communicationAccount/login',
+            info: 'communicationAlert/info',
+            error: 'communicationAlert/error',
+        }),
     },
 };
 </script>

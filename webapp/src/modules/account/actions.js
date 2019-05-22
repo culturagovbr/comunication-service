@@ -21,14 +21,7 @@ export const login = ({ dispatch, commit }, {
                 if (data && data.token) {
                     commit(types.LOGIN_SUCESSO, data.token);
                     localStorage.setItem('communication_token', data.token);
-                    dispatch('communicationAlert/info', 'Login realizado com sucesso!', {
-                        root: true,
-                    });
                     dispatch('definirInformacoesConta', data.token);
-                } else {
-                    dispatch('communicationAlert/error', 'Falha ao realizar login.', {
-                        root: true,
-                    });
                 }
             }
         } catch (Exception) {
