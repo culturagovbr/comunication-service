@@ -97,6 +97,7 @@ export default {
             cpf: '',
             password: '',
             rules: {
+                required: value => !!value || 'Campo obrigatório.',
                 minLengthCPF: object => object.length === 11 || 'Campo obrigatório.',
                 password: object => !!object || 'Senha obrigatória',
             },
@@ -110,7 +111,6 @@ export default {
         ]),
     },
     mounted() {
-        console.log(this);
         // reset login status
         this.logout();
     },
@@ -135,7 +135,7 @@ export default {
         },
         ...mapActions({
             login: 'communicationAccount/login',
-            logout: 'communicationAccount/login',
+            logout: 'communicationAccount/logout',
             info: 'communicationAlert/info',
             error: 'communicationAlert/error',
         }),

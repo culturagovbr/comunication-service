@@ -14,7 +14,13 @@
                 v-show="carregando"
                 v-if="status.loggedIn"/>
             <v-spacer/>
-            <Status />
+            <Status
+            />
+            <!--nome="Vinicius Feitosa"-->
+            <!--cpf="01569347603"-->
+            <!--password="12345"-->
+            <!--sistema="salic"-->
+            <!--email="viniciusfesil@gmail.com"-->
         </v-toolbar>
 
         <alerta />

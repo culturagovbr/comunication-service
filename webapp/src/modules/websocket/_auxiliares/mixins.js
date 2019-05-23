@@ -28,6 +28,7 @@ export default {
     computed: {
         ...mapGetters({
             informacoesConta: 'communicationAccount/informacoesConta',
+            tokenJWT: 'communicationAccount/token',
         }),
     },
     watch: {
@@ -39,19 +40,27 @@ export default {
         if (this.informacoesConta == null || this.informacoesConta.email == null) {
             this.definirInformacoesConta(this.communicationToken);
         }
-        let token = localStorage.getItem('communication_token');
-        if (!token && !this._.isEmpty([
+
+        if (!this.tokenJWT && !this._.isEmpty([
             this.cpf,
             this.email,
             this.nome,
             this.sistema,
         ])) {
-            token = this.login({
+            this.login({
                 cpf: this.cpf,
                 email: this.email,
                 nome: this.nome,
                 sistema: this.sistema,
+                password: 12345,
+            }).then((response) => {
+                console.log(response);
             });
+        }
+
+        let token = localStorage.getItem('communication_token');
+        if(this._.isEmpty(token)) {
+            token = this.tokenJWT;
         }
         tratarConexaoWebsocket({
             store: this.$store,
