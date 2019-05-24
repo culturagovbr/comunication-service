@@ -20,6 +20,21 @@ class Sistema implements IService
         return $data;
     }
 
+    public function buscarSistemaPorNome(string $nomeSistema)
+    {
+        $modeloSistema = (new ModeloSistema())->select([
+            'sistema_id'
+        ]);
+        if (!isset($nomeSistema)) {
+            throw new \Exception('Dados para pesquisa não informados.');
+        }
+        $dados = $modeloSistema->where("descricao", 'ilike', strtolower($nomeSistema))
+            ->where('is_ativo', '=', true)->first();
+        if($dados) {
+            return $dados->toArray();
+        }
+    }
+
     public function criar(array $dados = []): ModeloSistema
     {
         $validator = Validator::make($dados, [

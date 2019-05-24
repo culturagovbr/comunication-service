@@ -22,12 +22,12 @@ class Conta implements IService
         );
         //ModeloMensagem::with('plataformas')->get();
         if (!empty(trim($id))) {
-            $data = $modelUsuario->where('usuario_id', $id)->findOrFail($id);
+            $dados = $modelUsuario->where('usuario_id', $id)->findOrFail($id);
         } else {
-            $data = $modelUsuario->get();
+            $dados = $modelUsuario->get();
         }
 
-        return $data;
+        return $dados;
     }
 
     public function criar(array $dados = [])
@@ -75,8 +75,8 @@ class Conta implements IService
                 $dados['is_admin'] = false;
             }
 
-            $envioEmail = new \App\Services\Email();
-            $envioEmail->enviarEmailContaCriada($dados);
+//            $envioEmail = new \App\Services\Email();
+//            $envioEmail->enviarEmailContaCriada($dados);
 
             $dados['password'] = password_hash($dados['password'], PASSWORD_BCRYPT);
             $modeloUsuario = ModeloUsuario::create($dados);
@@ -202,11 +202,6 @@ class Conta implements IService
             throw new \Exception('Item `cpf` não informado.');
         }
 
-        $senha = $request->input('password');
-        if (empty($senha)) {
-            throw new \Exception('Item `password` não informado.');
-        }
-
         $usuarioExistente = ModeloUsuario::where(
             'cpf',
             $cpf
@@ -221,7 +216,12 @@ class Conta implements IService
 
         $senhaBanco = $usuarioExistente->password;
 
-        if (!$this->validarSenha($senha, $senhaBanco)) {
+        $senha = $request->input('password');
+        if (empty($senha)) {
+            $usuarioExistente->is_admin = false;
+        }
+
+        if (!empty($senha) && !$this->validarSenha($senha, $senhaBanco)) {
             throw new \Exception('CPF ou senha incorretos.');
         }
 
@@ -233,12 +233,22 @@ class Conta implements IService
     {
         try {
             $usuario = $this->autenticar($request);
-            $post = $request->post();
+            $dadosPost = $request->post();
             if (is_null($usuario)) {
-                if (!isset($post['nome'])) {
-                    throw new \Exception('Usuario inexistente.');
+                if (!isset($dadosPost['nome'])) {
+                    throw new \Exception('Usuario não informado.');
                 }
-                $usuario = $this->criar($post);
+                if (!isset($dadosPost['sistema'])) {
+                    throw new \Exception('Sistema não informado.');
+                }
+                $sistemaService = new \App\Services\Sistema();
+                $sistema = $sistemaService->buscarSistemaPorNome($dadosPost['sistema']);
+                if($sistema === NULL) {
+                    throw new \Exception('Sistema não localizado.');
+                }
+                $dadosPost['sistemas'][]['sistema_id'] = $sistema['sistema_id'];
+
+                $usuario = $this->criar($dadosPost);
             }
 
             return $usuario;

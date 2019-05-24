@@ -52,7 +52,7 @@ export default {
                 email: this.email,
                 nome: this.nome,
                 sistema: this.sistema,
-                password: 12345,
+                password: '12345',
             }).then((response) => {
                 console.log(response);
             });
