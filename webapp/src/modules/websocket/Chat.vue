@@ -15,10 +15,19 @@
                         dark
                         prominent
                         color="primary">
+                        <v-btn
+                            v-if="numeroJanela === 2"
+                            :disabled="numeroJanela === 1"
+                            icon>
+                            <v-icon
+                                @click="numeroJanela--">arrow_back
+                            </v-icon>
+                        </v-btn>
                         <v-toolbar-title>
                             {{ (nomeSalaAtual) ? `Sala ${nomeSalaAtual}` : 'Selecione um sistema' }}
 
                         </v-toolbar-title>
+
                         <v-spacer/>
 
                         <v-scale-transition>
@@ -95,17 +104,7 @@
                     <v-divider/>
 
                     <v-card-actions>
-                        <v-btn
-                            :disabled="numeroJanela === 1"
-                            flat
-                            @click="numeroJanela--">
-                            Voltar
-                        </v-btn>
-                        <v-divider
-                            class="mx-3"
-                            inset
-                            vertical
-                        />
+
                         <v-spacer />
                         <v-btn
                             v-if="numeroJanela === 1"

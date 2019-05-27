@@ -1,4 +1,4 @@
-<template>
+ <template>
     <v-content>
         <v-container fluid>
             <v-layout
