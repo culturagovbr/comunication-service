@@ -14,7 +14,13 @@
                 v-show="carregando"
                 v-if="status.loggedIn"/>
             <v-spacer/>
-            <Status />
+            <Status
+            />
+<!--            nome="Feitosa ral"-->
+<!--            cpf="99977788822"-->
+<!--            password="12345"-->
+<!--            sistema="salic"-->
+<!--            email="aaabbb1b@a1aa.aaa"-->
         </v-toolbar>
 
         <alerta />

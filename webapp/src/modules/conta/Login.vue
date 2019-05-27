@@ -97,6 +97,7 @@ export default {
             cpf: '',
             password: '',
             rules: {
+                required: value => !!value || 'Campo obrigatório.',
                 minLengthCPF: object => object.length === 11 || 'Campo obrigatório.',
                 password: object => !!object || 'Senha obrigatória',
             },
@@ -110,7 +111,7 @@ export default {
         ]),
     },
     mounted() {
-    // reset login status
+        // reset login status
         this.logout();
     },
     methods: {
@@ -120,7 +121,10 @@ export default {
                 if (cpf && password) {
                     this.login({ cpf, password }).then((response) => {
                         if (response != null && response.data && response.data.data && response.data.data.token) {
+                            this.info('Login realizado com sucesso!');
                             this.$router.push('/');
+                        } else {
+                            this.error('Falha ao realizar login.');
                         }
                     });
                 }
@@ -129,10 +133,12 @@ export default {
         clear() {
             this.$refs.form.reset();
         },
-        ...mapActions('communicationAccount', [
-            'login',
-            'logout',
-        ]),
+        ...mapActions({
+            login: 'communicationAccount/login',
+            logout: 'communicationAccount/logout',
+            info: 'communicationAlert/info',
+            error: 'communicationAlert/error',
+        }),
     },
 };
 </script>

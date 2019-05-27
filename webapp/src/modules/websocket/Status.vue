@@ -1,5 +1,6 @@
 <template>
     <div>
+
         <v-scale-transition>
             <v-tooltip
                 v-if="status.loggedIn"

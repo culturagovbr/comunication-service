@@ -2,6 +2,7 @@ import VeeValidate from 'vee-validate';
 import '@babel/polyfill';
 import Vue from 'vue';
 import VueSocketIO from 'vue-socket.io';
+import VueLodash from 'vue-lodash';
 import './plugins/vuetify';
 import App from './App.vue';
 import router from './router';
@@ -9,6 +10,8 @@ import store from './store';
 import filters from './filters';
 import './registerServiceWorker';
 import $socket from './modules/websocket/_auxiliares/socket-client-instance';
+
+Vue.use(VueLodash, { name: 'lodash' }); // options is optional
 
 Vue.use(VeeValidate);
 

@@ -6,13 +6,13 @@ import { requisicaoAutorizada } from './_auxiliares/requisicao-autorizada';
 export const storeInit = () => {};
 
 export const login = ({ dispatch, commit }, {
-    cpf, password, nome, sistema,
+    cpf, password, nome, sistema, email,
 }) => {
     commit(types.LOGIN_REQUISICAO, { cpf });
     return requisicaoAutorizada.post(
         `http://${process.env.VUE_APP_API_HOST}:${process.env.VUE_APP_API_PORT}/v1/autenticacao/login`,
         {
-            cpf, password, nome, sistema,
+            cpf, password, nome, sistema, email,
         },
     ).then((response) => {
         try {
@@ -21,14 +21,7 @@ export const login = ({ dispatch, commit }, {
                 if (data && data.token) {
                     commit(types.LOGIN_SUCESSO, data.token);
                     localStorage.setItem('communication_token', data.token);
-                    dispatch('communicationAlert/info', 'Login realizado com sucesso!', {
-                        root: true,
-                    });
                     dispatch('definirInformacoesConta', data.token);
-                } else {
-                    dispatch('communicationAlert/error', 'Falha ao realizar login.', {
-                        root: true,
-                    });
                 }
             }
         } catch (Exception) {
