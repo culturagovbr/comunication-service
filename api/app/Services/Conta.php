@@ -183,13 +183,13 @@ class Conta implements IService
         }
     }
 
-    public function remover($id, $dadosUsuarioLogado)
+    public function remover($usuario_id, $dadosUsuarioLogado)
     {
-        $usuario = ModeloUsuario::findOrFail($id);
-        if ($dadosUsuarioLogado['usuario_id'] != $id) {
+        $usuario = ModeloUsuario::findOrFail($usuario_id);
+        if ($dadosUsuarioLogado['usuario_id'] != $usuario_id) {
 
             $usuarios = $usuario->sistemas();
-            $usuarios->where('usuario_id', '=', $id)->detach();
+            $usuarios->where('usuario_id', '=', $usuario_id)->detach();
 
             return $usuario->delete();
         }
