@@ -16,10 +16,6 @@
             <v-spacer/>
             <Status
             />
-            <!--nome="bbbbbbbbbb"-->
-            <!--cpf="12345428912"-->
-            <!--sistema="salic"-->
-            <!--email="aaabbb1b@a1aaa.aaa"-->
         </v-toolbar>
 
         <alerta />
