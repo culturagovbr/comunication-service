@@ -75,10 +75,10 @@ class Conta implements IService
                 $dados['is_admin'] = false;
             }
 
-//            $envioEmail = new \App\Services\Email();
-//            $envioEmail->enviarEmailContaCriada($dados);
+            if (isset($dados['password']) && !empty($dados['password'])) {
+                $envioEmail = new \App\Services\Email();
+                $envioEmail->enviarEmailContaCriada($dados);
 
-            if ($dados['password']) {
                 $dados['password'] = password_hash(
                     $dados['password'],
                     PASSWORD_BCRYPT
@@ -220,7 +220,6 @@ class Conta implements IService
         }
 
         $senhaBanco = $usuarioExistente->password;
-
         $senha = $request->input('password');
         if (empty($senha)) {
             $usuarioExistente->is_admin = false;
