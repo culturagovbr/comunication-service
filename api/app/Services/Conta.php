@@ -37,7 +37,7 @@ class Conta implements IService
                 "nome" => 'required|string|min:3|max:50',
                 "cpf" => 'required|string|min:11|max:11',
                 "email" => 'required|string|min:3|max:50',
-                "password" => 'required|string|min:3|max:50',
+                "password" => 'string|min:3|max:50',
                 "sistemas" => 'array',
             ]);
 
@@ -78,7 +78,12 @@ class Conta implements IService
 //            $envioEmail = new \App\Services\Email();
 //            $envioEmail->enviarEmailContaCriada($dados);
 
-            $dados['password'] = password_hash($dados['password'], PASSWORD_BCRYPT);
+            if ($dados['password']) {
+                $dados['password'] = password_hash(
+                    $dados['password'],
+                    PASSWORD_BCRYPT
+                );
+            }
             $modeloUsuario = ModeloUsuario::create($dados);
 
             if (isset($dados['sistemas']) && count($dados['sistemas']) > 0) {
@@ -242,8 +247,10 @@ class Conta implements IService
                     throw new \Exception('Sistema não informado.');
                 }
                 $sistemaService = new \App\Services\Sistema();
-                $sistema = $sistemaService->buscarSistemaPorNome($dadosPost['sistema']);
-                if($sistema === NULL) {
+                $sistema = $sistemaService->buscarSistemaPorNome(
+                    $dadosPost['sistema']
+                );
+                if ($sistema === NULL) {
                     throw new \Exception('Sistema não localizado.');
                 }
                 $dadosPost['sistemas'][]['sistema_id'] = $sistema['sistema_id'];

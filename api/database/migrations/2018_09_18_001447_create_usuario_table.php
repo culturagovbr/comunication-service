@@ -20,7 +20,7 @@ class CreateUsuarioTable extends Migration
             $table->boolean('is_admin');
             $table->string('email')->unique();
             $table->string('cpf', 11)->unique()->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->timestamps();
         });
     }
