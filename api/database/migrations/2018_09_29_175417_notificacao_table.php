@@ -17,7 +17,7 @@ class NotificacaoTable extends Migration
             $table->increments('notificacao_id');
             $table->text('codigo_destinatario');
             $table->integer('mensagem_id')->nullable();
-            $table->string('mensagem_externa')->nullable();
+            $table->text('mensagem_externa')->nullable();
             $table->dateTime('data_envio');
             $table->boolean('is_notificacao_lida');
         });
