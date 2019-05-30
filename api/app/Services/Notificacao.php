@@ -41,8 +41,8 @@ class Notificacao implements IService
 
         $modeloNotificacao = ModeloNotificacao::create($dados);
 
-        $envioEmail = new \App\Services\Email();
-        $envioEmail->enviarNotificacaoEmail($dados['mensagem_id']);
+//        $envioEmail = new \App\Services\Email();
+//        $envioEmail->enviarNotificacaoEmail($dados['mensagem_id']);
 
         return $this->obter($modeloNotificacao->notificacao_id);
     }

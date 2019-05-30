@@ -1,22 +1,22 @@
-version: '2'
+version: '2.1'
 services:
 
   webapp-service:
     image: node:8.11.4-slim
     container_name: comunication-webapp
-    user: "node"
+    user: "root"
     working_dir: /home/node/app
     volumes:
       - ./webapp:/home/node/app
     command:
-      sh -c 'npm run serve'
+#      sh -c 'npm run serve'
       #      sh -c 'npm run lint && npm run serve'
-      #      sh -c 'npm i && npm run lint-fix && npm run serve'
+      sh -c 'npm run serve'
     ports:
       - "8080:8080"
     environment:
-      - NODE_CONFIG_ENV=production
-      - NODE_ENV=production
+      - NODE_CONFIG_ENV=development
+      - NODE_ENV=development
       - WEBSOCKET_HOST=localhost
       - WEBSOCKET_PORT=8081
       #- NODE_CONFIG_ENV=production
@@ -31,7 +31,7 @@ services:
       - ./api:/application
       - ./docker/php-fpm/php-ini-overrides.ini:/etc/php/7.2/fpm/conf.d/99-overrides.ini
     environment:
-      #  - UPDATE_COMPOSER_DEPENDENCIES=true
+#      - UPDATE_COMPOSER_DEPENDENCIES=true
       - USE_PHP_FPM=true
       - DB_CONNECTION=pgsql
       - DB_HOST=comunication-database
@@ -40,7 +40,11 @@ services:
       - DB_USERNAME=notificacao
       - DB_PASSWORD=senhaNotificacao
     depends_on:
-      - database-service
+      database-service:
+        condition: service_healthy
+    links:
+      - database-service:comunication-database
+    restart: on-failure
 
   webserver-service:
     image: nginx:alpine
@@ -65,6 +69,11 @@ services:
       - api-service
 
   database-service:
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U notificacao -d notificacao || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     image: postgres:10
     container_name: comunication-database
     environment:
@@ -73,7 +82,7 @@ services:
       - POSTGRES_DB=notificacao
       - POSTGRES_DB_TEST=notificacao-test
     ports:
-      - "5432:5432"
+      - "5433:5432"
     expose:
       - "5432"
     volumes:
