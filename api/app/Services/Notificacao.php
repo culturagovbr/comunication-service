@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Notificacao as ModeloNotificacao;
 use Carbon\Carbon;
 use DB;
+use mysql_xdevapi\Exception;
 use Validator;
 use App\Models\Usuario as ModeloUsuario;
 
@@ -24,14 +25,34 @@ class Notificacao implements IService
 
     public function criar(array $dados = []): ModeloNotificacao
     {
+
+        if (!isset($dados['mensagem_id'])
+            && empty($dados['mensagem_id'])
+            && !isset($dados['mensagem_externa'])
+            && empty($dados['mensagem_externa'])) {
+            throw new Exception("Identificador da mensagem ou mensagem externa não informados.");
+        }
+        if ($dados['mensagem_externa']) {
+            $mensagem = new \App\Services\Mensagem();
+            $mensagens = $mensagem->buscar([
+                'titulo' => $dados['mensagem_externa']
+            ]);
+
+            if (count($mensagens) < 1) {
+                PAREI AQUI
+            }
+            $dados['mensagem_id'] = $mensagens[0]->mensagem_id;
+        }
+
         $validator = Validator::make($dados, [
-            "codigo_destinatario" => 'required|string',
+            "codigo_destinatario" => 'required|string|min:3',
             "mensagem_id" => 'required|int',
         ]);
 
         if ($validator->fails()) {
             throw new \Exception($validator->errors()->first());
         }
+
 
         $dados = array_merge($dados, [
             'is_ativo' => true,
@@ -51,7 +72,7 @@ class Notificacao implements IService
     {
         $validator = Validator::make($dados, [
             "is_notificacao_lida" => 'bool',
-            "codigo_destinatario" => 'string',
+            "codigo_destinatario" => 'string|min:3',
             "mensagem_id" => 'int',
         ]);
 
@@ -78,7 +99,7 @@ class Notificacao implements IService
         $usuario_id,
         $sistema_id,
         $is_notificacao_lida
-    ) : \Illuminate\Support\Collection
+    ): \Illuminate\Support\Collection
     {
         if (is_null($usuario_id)) {
             throw new \Exception('Identificador do usuário obrigatório.');
@@ -100,7 +121,11 @@ class Notificacao implements IService
 //            ->toSql();
 
         if (!is_null($sistema_id)) {
-            $consulta->where('notificacao.mensagem.sistema_id', '=', $sistema_id);
+            $consulta->where(
+                'notificacao.mensagem.sistema_id',
+                '=',
+                $sistema_id
+            );
         }
 
         return $consulta->get();
@@ -109,7 +134,7 @@ class Notificacao implements IService
     public function obterNotificacoesUsuario(
         $usuario_id,
         $is_notificacao_lida
-    ) : \Illuminate\Support\Collection
+    ): \Illuminate\Support\Collection
     {
         if (is_null($usuario_id)) {
             throw new \Exception('Identificador do usuário obrigatório.');
@@ -136,8 +161,7 @@ class Notificacao implements IService
         return $notificacoesUsuario->get();
     }
 
-    private function obterQueryNotificacoesUsuario()
-        : \Illuminate\Database\Query\Builder
+    private function obterQueryNotificacoesUsuario(): \Illuminate\Database\Query\Builder
     {
         return DB::table('notificacao.notificacao')
             ->select([

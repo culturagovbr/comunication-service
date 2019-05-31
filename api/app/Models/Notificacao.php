@@ -11,7 +11,6 @@ class Notificacao extends Model
     protected $fillable = [
         'codigo_destinatario',
         'mensagem_id',
-        'mensagem_externa',
         'data_envio',
         'is_notificacao_lida'
     ];
