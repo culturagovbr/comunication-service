@@ -26,24 +26,6 @@ class Notificacao implements IService
     public function criar(array $dados = []): ModeloNotificacao
     {
 
-        if (!isset($dados['mensagem_id'])
-            && empty($dados['mensagem_id'])
-            && !isset($dados['mensagem_externa'])
-            && empty($dados['mensagem_externa'])) {
-            throw new Exception("Identificador da mensagem ou mensagem externa não informados.");
-        }
-        if ($dados['mensagem_externa']) {
-            $mensagem = new \App\Services\Mensagem();
-            $mensagens = $mensagem->buscar([
-                'titulo' => $dados['mensagem_externa']
-            ]);
-
-            if (count($mensagens) < 1) {
-                PAREI AQUI
-            }
-            $dados['mensagem_id'] = $mensagens[0]->mensagem_id;
-        }
-
         $validator = Validator::make($dados, [
             "codigo_destinatario" => 'required|string|min:3',
             "mensagem_id" => 'required|int',
@@ -256,5 +238,79 @@ class Notificacao implements IService
 
         return $this->obter($notificacao_id);
 
+    }
+
+    public function cadastrarMensagemDinamica(array $dados = [])
+    {
+        if (!isset($dados['mensagem_id'])
+            && empty($dados['mensagem_id'])
+            && $this->validarPreenchimentoMensagemExterna($dados)
+        ) {
+            throw new Exception(
+                'Identificador da mensagem ou dados da mensagem externa não informados.'
+            );
+        }
+        if (!isset($dados['mensagem_id'])
+            && empty($dados['mensagem_id'])) {
+            $serviceMensagem = new \App\Services\Mensagem();
+            $sistemaService = new \App\Services\Sistema();
+            $sistema = $sistemaService->buscarSistemaPorNome($dados['sistema']);
+
+            if($sistema === NULL) {
+                throw new \Exception('Sistema não localizado.');
+            }
+
+            $mensagens = $serviceMensagem->obter(
+                null,
+                ['titulo' => $dados['mensagem_externa']]
+            );
+
+            if (count($mensagens) < 1) {
+                $mensagem = $serviceMensagem->criar(
+                    [
+                        "titulo" => $dados['mensagem_externa_titulo'],
+                        "descricao" => $dados['mensagem_externa_descricao'],
+                        "sistema_id" => $sistema['sistema_id'],
+                        "autor_id" => $dados['usuario_id'],
+                        "plataformas" => $dados['plataformas']
+                    ]
+                );
+            }
+            $dados['mensagem_id'] = $mensagens[0]->mensagem_id;
+        }
+        return $this->criar($dados);
+    }
+
+    private function validarPreenchimentoMensagemExterna(array $dados = [])
+    {
+        if (count($dados) < 1) {
+            return false;
+        }
+        if (!isset($dados['mensagem_externa_titulo'])
+            && empty($dados['mensagem_externa_titulo'])
+        ) {
+            return false;
+        }
+        if (!isset($dados['mensagem_externa_descricao'])
+            && empty($dados['mensagem_externa_descricao'])
+        ) {
+            return false;
+        }
+        if (!isset($dados['sistema'])
+            && empty($dados['sistema'])
+        ) {
+            return false;
+        }
+        if (!isset($dados['usuario_id'])
+            && empty($dados['usuario_id'])
+        ) {
+            return false;
+        }
+        if (!isset($dados['plataformas'])
+            && count($dados['plataformas'] < 1)
+        ) {
+            return false;
+        }
+        return true;
     }
 }
