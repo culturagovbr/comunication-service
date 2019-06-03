@@ -275,8 +275,10 @@ class Notificacao implements IService
                         "plataformas" => $dados['plataformas']
                     ]
                 );
+                $dados['mensagem_id'] = $mensagem->mensagem_id;
+            } else {
+                $dados['mensagem_id'] = $mensagens[0]->mensagem_id;
             }
-            $dados['mensagem_id'] = $mensagens[0]->mensagem_id;
         }
         return $this->criar($dados);
     }
