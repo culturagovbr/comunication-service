@@ -99,8 +99,7 @@ export default {
     props: {
         item: {
             type: Object,
-            default: () => {
-            },
+            default: () => {},
         },
         indiceEditado: {
             type: Number,
@@ -133,8 +132,8 @@ export default {
 
     computed: {
         ...mapGetters({
-            sistemas: 'sistema/sistema',
-            informacoesConta: 'account/informacoesConta',
+            sistemas: 'communicationSistema/sistema',
+            informacoesConta: 'communicationAccount/informacoesConta',
         }),
     },
 
@@ -153,9 +152,9 @@ export default {
     methods: {
 
         ...mapActions({
-            cadastrarConta: 'conta/cadastrarConta',
-            obterSistemas: 'sistema/obterSistemas',
-            atualizarConta: 'conta/atualizarConta',
+            cadastrarConta: 'communicationConta/cadastrarConta',
+            obterSistemas: 'communicationSistema/obterSistemas',
+            atualizarConta: 'communicationConta/atualizarConta',
         }),
 
         save() {

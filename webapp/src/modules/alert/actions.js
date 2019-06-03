@@ -1,5 +1,7 @@
 import * as types from './types';
 
+export const storeInit = () => {};
+
 export const success = ({ commit }, message) => {
     commit(types.SUCCESS, message);
 };

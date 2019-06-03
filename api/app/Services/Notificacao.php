@@ -190,6 +190,7 @@ class Notificacao implements IService
             'usuario_id',
             'nome',
             'email',
+            'cpf',
             'is_ativo',
             'is_admin'
         );

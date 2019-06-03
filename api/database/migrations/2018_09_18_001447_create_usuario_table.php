@@ -19,7 +19,8 @@ class CreateUsuarioTable extends Migration
             $table->boolean('is_ativo');
             $table->boolean('is_admin');
             $table->string('email')->unique();
-            $table->string('password');
+            $table->string('cpf', 11)->unique()->nullable();
+            $table->string('password')->nullable();
             $table->timestamps();
         });
     }

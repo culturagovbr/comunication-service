@@ -20,16 +20,18 @@
                                     v-model="valid"
                                     @submit.prevent="submit()">
                                     <v-text-field
-                                        v-model="email"
-                                        :rules="emailRules"
+                                        v-validate="'required'"
+                                        :mask="'###.###.###-##'"
+                                        v-model="cpf"
+                                        :rules="[rules.required, rules.minLengthCPF]"
                                         prepend-icon="person"
-                                        label="E-mail"
-                                        type="email"
-                                        name="email"
-                                        required />
+                                        label="CPF"
+                                        class="form-control"
+                                        required
+                                    />
                                     <v-text-field
                                         v-model="password"
-                                        :rules="passwordRules"
+                                        :rules="[rules.password]"
                                         prepend-icon="lock"
                                         type="password"
                                         label="Senha"
@@ -38,24 +40,42 @@
                                         required />
 
                                     <v-card-actions>
-                                        <!--<v-btn @click="clear">Limpar</v-btn>-->
-                                        <!--<v-spacer></v-spacer>-->
+                                        <v-layout
+                                            justify-center
+                                            column
+                                            fill-height>
 
-                                    <v-btn
-                                        :disabled="!valid"
-                                        color="primary"
-                                        type="submit"> Entrar
-                                    </v-btn>
-                                    <router-link
-                                        to="/cadastrar"
-                                        class="btn btn-link"
-                                        style="margin-left: 20px"
-                                    >Cadastre-se</router-link>
-                                    <router-link
-                                        to="/recuperar"
-                                        class="btn btn-link"
-                                        style="margin-left: 20px"
-                                    >Esqueci minha senha</router-link>
+                                            <div class="text-xs-right btn-link mt-3">
+                                                <v-btn
+                                                    to="/recuperar"
+                                                    flat
+                                                    class="caption"
+                                                    small
+                                                    color="primary">Recuperar senha</v-btn>
+                                            </div>
+
+                                            <v-btn
+                                                :disabled="!valid"
+                                                color="primary"
+                                                block
+                                                type="submit"> Entrar
+                                            </v-btn>
+                                            <v-divider class="mt-2 mb-2" />
+                                            <v-tooltip
+                                                bottom
+                                                class="text-xs-center btn btn-link">
+                                                <v-btn
+                                                    slot="activator"
+                                                    flat
+                                                    large
+                                                    color="warning"
+                                                    to="/cadastrar"
+                                                >Cadastre-se</v-btn>
+                                                <span>Ir para a tela de cadastro</span>
+                                            </v-tooltip>
+
+
+                                        </v-layout>
 
                                     </v-card-actions>
                                 </v-form>
@@ -74,44 +94,51 @@ import { mapState, mapActions } from 'vuex';
 export default {
     data() {
         return {
-            email: '',
-            emailRules: [
-                v => !!v || 'E-mail obrigatório',
-                v => /.+@.+/.test(v) || 'E-mail precisa ser válido',
-            ],
+            cpf: '',
             password: '',
-            passwordRules: [
-                v => !!v || 'Senha obrigatória',
-            ],
+            rules: {
+                required: value => !!value || 'Campo obrigatório.',
+                minLengthCPF: object => object.length === 11 || 'Campo obrigatório.',
+                password: object => !!object || 'Senha obrigatória',
+            },
             valid: true,
         };
     },
     computed: {
-        ...mapState('account', [
+        ...mapState('communicationAccount', [
             'status',
             'loggingIn',
         ]),
     },
     mounted() {
-    // reset login status
+        // reset login status
         this.logout();
     },
     methods: {
         submit() {
             if (this.$refs.form.validate()) {
-                const { email, password } = this;
-                if (email && password) {
-                    this.login({ email, password });
+                const { cpf, password } = this;
+                if (cpf && password) {
+                    this.login({ cpf, password }).then((response) => {
+                        if (response != null && response.data && response.data.data && response.data.data.token) {
+                            this.info('Login realizado com sucesso!');
+                            this.$router.push('/');
+                        } else {
+                            this.error('Falha ao realizar login.');
+                        }
+                    });
                 }
             }
         },
         clear() {
             this.$refs.form.reset();
         },
-        ...mapActions('account', [
-            'login',
-            'logout',
-        ]),
+        ...mapActions({
+            login: 'communicationAccount/login',
+            logout: 'communicationAccount/logout',
+            info: 'communicationAlert/info',
+            error: 'communicationAlert/error',
+        }),
     },
 };
 </script>

@@ -78,9 +78,9 @@ export default {
     },
     computed: {
         ...mapGetters({
-            status: 'account/status',
-            token: 'account/token',
-            informacoesConta: 'account/informacoesConta',
+            status: 'communicationAccount/status',
+            token: 'communicationAccount/token',
+            informacoesConta: 'communicationAccount/informacoesConta',
         }),
     },
     watch: {

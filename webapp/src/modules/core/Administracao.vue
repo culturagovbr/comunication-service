@@ -58,13 +58,13 @@ export default {
 
     computed: {
         ...mapGetters({
-            informacoesConta: 'account/informacoesConta',
+            informacoesConta: 'communicationAccount/informacoesConta',
         }),
     },
 
     mounted() {
         if (this.informacoesConta.is_admin !== true) {
-            this.$store.dispatch('alert/error', 'Usuário sem privilégios administrativos.', { root: true });
+            this.$store.dispatch('communicationAlert/error', 'Usuário sem privilégios administrativos.', { root: true });
             this.$router.push('/');
         }
     },
