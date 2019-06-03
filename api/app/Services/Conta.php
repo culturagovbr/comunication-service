@@ -233,7 +233,7 @@ class Conta implements IService
     {
         try {
             $usuario = $this->autenticar($request);
-            $dadosPost = $request->post();
+            $dadosPost = array_filter($request->post());
             if (is_null($usuario)) {
                 if (!isset($dadosPost['nome'])) {
                     throw new \Exception('Usuario não informado.');
