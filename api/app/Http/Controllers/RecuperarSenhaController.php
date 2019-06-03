@@ -10,7 +10,7 @@ class RecuperarSenhaController
 {
     public function post(ServerRequestInterface $request)
     {
-        $dados = $request->getParsedBody();
+        $dados = array_filter($request->getParsedBody());
         $conta = new \App\Services\Conta();
 
         $response = response();
