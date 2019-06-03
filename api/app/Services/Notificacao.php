@@ -5,9 +5,9 @@ namespace App\Services;
 use App\Models\Notificacao as ModeloNotificacao;
 use Carbon\Carbon;
 use DB;
-use mysql_xdevapi\Exception;
 use Validator;
 use App\Models\Usuario as ModeloUsuario;
+use Illuminate\Database\Query\Builder;
 
 class Notificacao implements IService
 {
@@ -143,7 +143,7 @@ class Notificacao implements IService
         return $notificacoesUsuario->get();
     }
 
-    private function obterQueryNotificacoesUsuario(): \Illuminate\Database\Query\Builder
+    private function obterQueryNotificacoesUsuario(): Builder
     {
         return DB::table('notificacao.notificacao')
             ->select([
@@ -240,14 +240,12 @@ class Notificacao implements IService
 
     }
 
-    public function cadastrarMensagemDinamica(array $dados = [])
+    public function criarMensagemDinamica(array $dados = []) : ModeloNotificacao
     {
-        if (!isset($dados['mensagem_id'])
-            && empty($dados['mensagem_id'])
-            && $this->validarPreenchimentoMensagemExterna($dados)
-        ) {
-            throw new Exception(
-                'Identificador da mensagem ou dados da mensagem externa não informados.'
+        if ($this->validarPreenchimentoMensagemExterna($dados)) {
+            throw new \Exception(
+                'Identificador da mensagem ou dados 
+                da mensagem externa não informados.'
             );
         }
         if (!isset($dados['mensagem_id'])
@@ -262,7 +260,7 @@ class Notificacao implements IService
 
             $mensagens = $serviceMensagem->obter(
                 null,
-                ['titulo' => $dados['mensagem_externa']]
+                ['titulo' => $dados['mensagem_externa_titulo']]
             );
 
             if (count($mensagens) < 1) {
@@ -288,31 +286,21 @@ class Notificacao implements IService
         if (count($dados) < 1) {
             return false;
         }
-        if (!isset($dados['mensagem_externa_titulo'])
-            && empty($dados['mensagem_externa_titulo'])
-        ) {
-            return false;
+
+        $validator = Validator::make($dados, [
+            "mensagem_externa_titulo" => 'required|string|min:3|max:50',
+            "mensagem_externa_descricao" => 'required|string|min:3|max:9999',
+            "sistema" => 'required|string|min:3',
+            "usuario_id" => 'required|int',
+            "plataformas" => 'required|array|min:1',
+            "plataformas.*.plataforma_id" => 'required|int',
+        ]);
+
+        if ($validator->fails()) {
+            throw new \Exception($validator->errors()->first());
         }
-        if (!isset($dados['mensagem_externa_descricao'])
-            && empty($dados['mensagem_externa_descricao'])
-        ) {
-            return false;
-        }
-        if (!isset($dados['sistema'])
-            && empty($dados['sistema'])
-        ) {
-            return false;
-        }
-        if (!isset($dados['usuario_id'])
-            && empty($dados['usuario_id'])
-        ) {
-            return false;
-        }
-        if (!isset($dados['plataformas'])
-            && count($dados['plataformas'] < 1)
-        ) {
-            return false;
-        }
+
+
         return true;
     }
 }
