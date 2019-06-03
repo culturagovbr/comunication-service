@@ -29,9 +29,8 @@ class NotificacaoUsuarioController extends Controller
 
     public function patch(ServerRequestInterface $request, $notificacao_id, $usuario_id)
     {
-        $dados = $request->getParsedBody();
         $notificacao = new \App\Services\Notificacao();
-        $dados = $request->getParsedBody();
+        $dados = array_filter($request->getParsedBody());
         if(!isset($dados['']))
         /**
          * @var \Illuminate\Http\Response|\Laravel\Lumen\Http\ResponseFactory $response

@@ -107,10 +107,8 @@
 
 <script>
 import { mapState, mapActions, mapGetters } from 'vuex';
-import { TheMask } from 'vue-the-mask';
 
 export default {
-    components: { TheMask },
     data() {
         return {
             user: {

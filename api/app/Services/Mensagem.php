@@ -9,15 +9,18 @@ use Validator;
 class Mensagem implements IService
 {
 
-    public function obter($id = null)
+    public function obter($id = null, array $dados = [])
     {
-        if (!empty(trim($id))) {
-            $data = ModeloMensagem::with('plataformas:descricao')->findOrFail($id);
-        } else {
-            $data = ModeloMensagem::with('plataformas')->get();
+        $modeloMensagem = ModeloMensagem::with('plataformas:descricao');
+        foreach ($dados as $coluna => $dado) {
+            $modeloMensagem->where($coluna, $dado);
         }
 
-        return $data;
+        if (!empty(trim($id))) {
+            return $modeloMensagem->findOrFail($id);
+        }
+
+        return $modeloMensagem->get();
     }
 
     public function criar(array $dados = []): ModeloMensagem
@@ -39,7 +42,7 @@ class Mensagem implements IService
             'is_ativo' => true,
             'created_at' => Carbon::now()
         ]);
-        
+
         $mensagem = ModeloMensagem::create($dados);
         $this->vincularPlataforma($mensagem->mensagem_id, $dados['plataformas']);
 
