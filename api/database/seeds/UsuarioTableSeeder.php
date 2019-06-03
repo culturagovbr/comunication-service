@@ -28,7 +28,8 @@ class UsuarioTableSeeder extends Seeder
             'is_admin' => true,
             'email' => 'abcd@gmail.com',
             'password' => password_hash('123456', PASSWORD_BCRYPT),
-            'created_at' => New DateTime()
+            'created_at' => New DateTime(),
+            'cpf' => '01234567891',
         ]);
     }
 

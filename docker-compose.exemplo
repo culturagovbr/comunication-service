@@ -60,7 +60,7 @@ services:
       database-service:
         condition: service_healthy
     links:
-      - database-service:comunication-database
+      - database-service:communication-database
     restart: on-failure
 
   webserver-service:

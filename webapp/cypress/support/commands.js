@@ -23,17 +23,17 @@
 //
 // -- This is will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
-Cypress.Commands.add('login', (email, password) => {
+Cypress.Commands.add('login', (cpf, password) => {
     // cy.visit('http://' + Cypress.env('VUE_APP_HOST') + ':' + Cypress.env('VUE_APP_PORT') + '/login');
-    cy.visit('http://localhost:8080/login');
-    cy.url().should('eq', 'http://localhost:8080/login');
-    cy.get('[name="email"]')
-        .type(email);
+    cy.visit('http://localhost:8088/login');
+    cy.url().should('eq', 'http://localhost:8088/login');
+    cy.get('.form-control > .v-input__control > .v-input__slot > .v-text-field__slot > input')
+        .type(cpf);
     cy.wait(1000);
     cy.get('[name="password"]')
         .type(password);
     cy.wait(1000);
-    cy.get('.v-btn').click();
+    cy.get('.v-btn--block').click();
     // cy.url().should('eq', 'http://localhost:8080/');
     // cy.get('.v-snack__content').contains('Login realizado com sucesso!');
     // cy.get('.v-snack__content > .v-btn > .v-btn__content').click();
