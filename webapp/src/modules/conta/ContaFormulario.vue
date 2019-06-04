@@ -21,6 +21,13 @@
                         required
                         label="E-mail"/>
                     <v-text-field
+                            :mask="'###.###.###-##'"
+                            v-model="itemEditado.cpf"
+                            :rules="[rules.required, rules.minLengthCPF]"
+                            prepend-icon="person"
+                            required
+                            label="CPF"/>
+                    <v-text-field
                         v-if="informacoesConta.user_id === itemEditado.user_id || indiceEditado === -1"
                         v-validate="{ required: true, min: 6 }"
                         v-model="itemEditado.password"
@@ -117,6 +124,7 @@ export default {
             is_ativo: true,
             is_admin: false,
             sistemas: [],
+            cpf: '',
         },
         rules: {
             required: value => !!value || 'Campo Obrigatório.',
@@ -127,6 +135,7 @@ export default {
                 const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                 return pattern.test(value) || 'E-mail inválido.';
             },
+            minLengthCPF: object => (object != null && object.length != null && object.length === 11) || 'Campo obrigatório.',
         },
     }),
 
