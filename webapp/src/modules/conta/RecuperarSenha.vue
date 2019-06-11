@@ -120,7 +120,7 @@ export default {
         ...mapActions({
             registrar: 'communicationAccount/registrar',
             obterContas: 'communicationConta/obterContas',
-            recuperarSenha: 'communicationSistema/recuperarSenha',
+            recuperarSenha: 'communicationConta/recuperarSenha',
         }),
         tratarSubmissao() {
             if (this.$refs.form.validate()) {
