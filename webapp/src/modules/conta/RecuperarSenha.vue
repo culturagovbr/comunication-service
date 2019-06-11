@@ -23,7 +23,6 @@
                                 ref="form"
                                 v-model="valid"
                                 @submit.prevent="tratarSubmissao">
-
                                 <v-text-field
                                     v-validate="'required'"
                                     v-model="user.email"
@@ -34,11 +33,6 @@
                                     autocomplete="off"
                                     required
                                 />
-                                <div
-                                    v-if="submitted && errors.has('email')"
-                                    class="invalid-feedback">{{
-                                    errors.first('email') }}
-                                </div>
                                 <v-text-field
                                         v-model="user.novaSenha"
                                         :append-icon="show1 ? 'visibility' : 'visibility_off'"
@@ -53,10 +47,6 @@
                                         required
                                         @click:append="show1 = !show1"
                                 />
-                                <div
-                                        v-if="submitted && errors.has('password')"
-                                        class="invalid-feedback">{{ errors.first('password') }}
-                                </div>
                                 <v-text-field
                                         v-model="user.confirmarSenha"
                                         :append-icon="show2 ? 'visibility' : 'visibility_off'"
@@ -71,11 +61,6 @@
                                         required
                                         @click:append="show2 = !show2"
                                 />
-                                <div
-                                        v-if="submitted && errors.has('password')"
-                                        class="invalid-feedback">{{ errors.first('password') }}
-                                </div>
-
                                 <v-card-actions>
                                     <v-spacer/>
                                     <router-link
@@ -87,7 +72,8 @@
                                         :disabled="!valid"
                                         color="primary"
                                         type="submit"
-                                        @click.native="alterarSenha">Enviar
+                                        to="/login"
+                                        @click.native="alterarSenha">Recuperar
                                     </v-btn>
                                     <img v-show="status.registrando">
                                 </v-card-actions>
@@ -128,13 +114,13 @@ export default {
         };
     },
     computed: {
-        ...mapState('account', ['status']),
+        ...mapState('communicationAccount', ['status']),
     },
     methods: {
         ...mapActions({
-            registrar: 'account/registrar',
-            obterContas: 'conta/obterContas',
-            recuperarSenha: 'conta/recuperarSenha',
+            registrar: 'communicationAccount/registrar',
+            obterContas: 'communicationConta/obterContas',
+            recuperarSenha: 'communicationSistema/recuperarSenha',
         }),
         tratarSubmissao() {
             if (this.$refs.form.validate()) {
