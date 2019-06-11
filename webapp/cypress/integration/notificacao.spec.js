@@ -1,6 +1,8 @@
 describe('Modulo Notificacao', function() {
     beforeEach(() => {
-        cy.login('abcd@gmail.com', '123456');
+        cy.login('01234567891', '123456');
+        cy.wait(1000);
+        cy.url().should('eq', Cypress.env('VUE_APP_URL'));
         menuNotificacao();
         cy.wait(1000);
     });
@@ -10,6 +12,7 @@ describe('Modulo Notificacao', function() {
     });
 
     it('Cria Notificacao', function() {
+        cy.url().should('eq', Cypress.env('VUE_APP_URL') + 'notificacao');
         cy.get('.v-btn--bottom').click();
         cy.wait(1000);
 
@@ -22,12 +25,10 @@ describe('Modulo Notificacao', function() {
         cy.get('.v-menu__content--fixed > .v-select-list > .v-list > :nth-child(1) > .v-list__tile > .v-list__tile__content').click();
         cy.get('.blue > .v-btn__content').click();
         cy.wait(2000);
-
-        cy.visit('http://' + Cypress.env('VUE_APP_HOST') + ':' + Cypress.env('VUE_APP_PORT') + '/notificacao');
-        cy.wait(2000);
     });
 
     it('Ler Notificacao', function () {
+        cy.url().should('eq', Cypress.env('VUE_APP_URL') + 'notificacao');
         cy.wait(1000);
         cy.get('.v-badge > .v-icon').click();
         cy.wait(1000);
@@ -39,6 +40,7 @@ describe('Modulo Notificacao', function() {
     });
 
     it('Excluir Notificacao', function () {
+        cy.url().should('eq', Cypress.env('VUE_APP_URL') + 'notificacao');
         cy.wait(1000);
         cy.get(':nth-child(1) > .justify-center > .v-btn > .v-btn__content > .v-icon').click();
     })

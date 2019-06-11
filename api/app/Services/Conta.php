@@ -76,8 +76,8 @@ class Conta implements IService
             }
 
             if (isset($dados['password']) && !empty($dados['password'])) {
-                $envioEmail = new \App\Services\Email();
-                $envioEmail->enviarEmailContaCriada($dados);
+//                $envioEmail = new \App\Services\Email();
+//                $envioEmail->enviarEmailContaCriada($dados);
 
                 $dados['password'] = password_hash(
                     $dados['password'],
@@ -145,8 +145,8 @@ class Conta implements IService
             throw new \Exception($validator->errors()->first());
         }
 
-        $envioEmail = new \App\Services\Email();
-        $envioEmail->enviarNovaSenha($dados);
+//        $envioEmail = new \App\Services\Email();
+//        $envioEmail->enviarNovaSenha($dados);
 
         if (isset($dados['password']) && !empty($dados['password'])) {
             $dados['password'] = password_hash($dados['password'], PASSWORD_BCRYPT);

@@ -17,6 +17,20 @@ class UsuarioTableSeeder extends Seeder
         if(count($registros) < 1) {
             // cria 10 usuários utilizando a factory para o model Usuario
             factory(App\Models\Usuario::class, 15)->create();
+            $this->criarUsuarioTeste();
         }
     }
+
+    private function criarUsuarioTeste() {
+        DB::table('notificacao.usuario')->insert([
+            'nome' => 'Usuario Teste',
+            'is_ativo' => true,
+            'is_admin' => true,
+            'email' => 'abcd@gmail.com',
+            'password' => password_hash('123456', PASSWORD_BCRYPT),
+            'created_at' => New DateTime(),
+            'cpf' => '01234567891',
+        ]);
+    }
+
 }

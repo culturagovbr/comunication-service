@@ -12,6 +12,7 @@
 */
 
 $factory->define(App\Models\Usuario::class, function (Faker\Generator $faker) {
+    $faker->addProvider(new Faker\Provider\pt_BR\Person($faker));
     return [
         'nome' => $faker->name,
         'is_ativo' => $faker->boolean,
@@ -19,7 +20,7 @@ $factory->define(App\Models\Usuario::class, function (Faker\Generator $faker) {
         'email' => $faker->email,
         'password' => password_hash('12345', PASSWORD_BCRYPT),
         'created_at' => $faker->dateTime,
-        'cpf' => $faker->randomNumber(11),
+        'cpf' => $faker->cpf(false),
     ];
 });
 

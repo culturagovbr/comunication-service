@@ -1,6 +1,8 @@
 describe('Modulo Conta', function () {
     beforeEach(() => {
-        cy.login('abcd@gmail.com', '123456');
+        cy.login('01234567891', '123456');
+        cy.wait(1000);
+        cy.url().should('eq', Cypress.env('VUE_APP_URL'));
         menuConta();
         cy.wait(1000);
     });
@@ -10,6 +12,7 @@ describe('Modulo Conta', function () {
     });
 
     it('Criar Conta', function () {
+        cy.url().should('eq', Cypress.env('VUE_APP_URL') + 'administracao/conta');
         cy.get('.v-btn--bottom').click();
         cy.wait(1000);
 
@@ -34,12 +37,10 @@ describe('Modulo Conta', function () {
         cy.wait(1000);
 
         cy.get('.text-xs-center > .blue').click();
-        cy.wait(1000);
-
-        cy.get('.v-snack__content').contains('Cadastro realizado com sucesso!');
     });
 
     it('Editar Conta', function () {
+        cy.url().should('eq', Cypress.env('VUE_APP_URL') + 'administracao/conta');
         cy.get('[aria-label="Buscar"]').type('Jean Doe');
         cy.wait(1000);
 
@@ -60,6 +61,7 @@ describe('Modulo Conta', function () {
     });
 
     it('Excluir Conta', function () {
+        cy.url().should('eq', Cypress.env('VUE_APP_URL') + 'administracao/conta');
         cy.get('[aria-label="Buscar"]').type('John Doe');
         cy.wait(1000);
 
@@ -68,6 +70,7 @@ describe('Modulo Conta', function () {
 });
 
 const menuConta = () => {
+    cy.get('.v-badge > .v-icon');
     cy.get('.v-toolbar__side-icon > .v-btn__content > .v-icon').click();
     cy.wait(1000);
     

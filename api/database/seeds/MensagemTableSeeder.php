@@ -16,6 +16,18 @@ class MensagemTableSeeder extends Seeder
             ->get();
         if(count($registros) < 1) {
             factory(App\Models\Mensagem::class, 20)->create();
+            $this->criarMensagemTeste();
         }
+    }
+
+    private function criarMensagemTeste() {
+        DB::table('notificacao.mensagem')->insert([
+            'titulo' => 'Teste',
+            'descricao' => 'Uma mensagem teste',
+            'sistema_id' => 6,
+            'autor_id' => 16,
+            'is_ativo' => true,
+            'created_at' => New DateTime()
+        ]);
     }
 }
