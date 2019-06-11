@@ -1,4 +1,4 @@
-version: '2'
+version: '2.1'
 services:
 
   webapp-service:
@@ -16,6 +16,9 @@ services:
     - NODE_ENV=development
     #- NODE_CONFIG_ENV=production
     #- NODE_ENV=production
+#      Utilizar config abaixo para utilizacao do container docker Cypress
+#      - VUE_APP_API_HOST=webserver-service
+#      - VUE_APP_API_PORT=80
     - VUE_APP_API_HOST=localhost
     - VUE_APP_API_PORT=88
     - VUE_APP_WEBSOCKET_HOST=localhost
@@ -57,7 +60,11 @@ services:
     - MAIL_FROM_ADDRESS=hello@example.com
     - MAIL_FROM_NAME=Example app
     depends_on:
-    - database-service
+      database-service:
+        condition: service_healthy
+    links:
+      - database-service:communication-database
+    restart: on-failure
 
   webserver-service:
     image: nginx:alpine
@@ -82,6 +89,11 @@ services:
     - api-service
 
   database-service:
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U notificacao -d notificacao || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     image: postgres:10
     container_name: communication-database
     environment:
@@ -90,9 +102,24 @@ services:
     - POSTGRES_DB=notificacao
     - POSTGRES_DB_TEST=notificacao-test
     ports:
-    - "5432:5432"
+      - "5433:5432"
     expose:
     - "5432"
     volumes:
     - ./database/docker-data/postgres:/var/lib/postgresql/data
     - ./database/schema.sql:/docker-entrypoint-initdb.d/0.schema.sql
+
+#  cypress:
+#    image: "cypress/included:3.2.0"
+#    working_dir: /e2e
+#    volumes:
+#      - ./webapp:/e2e
+#    environment:
+#       #pass base url to test pointing at the web application
+#      - CYPRESS_baseUrl=http://webapp-service:8080
+#    depends_on:
+#      - webapp-service
+#      - api-service
+#    links:
+#      - api-service:communication-api
+#      - webapp-service:communication-webapp

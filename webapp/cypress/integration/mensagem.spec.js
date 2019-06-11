@@ -1,6 +1,8 @@
 describe('Modulo Mensagem', function () {
     beforeEach(() => {
-        cy.login('abcd@gmail.com', '123456');
+        cy.login('01234567891', '123456');
+        cy.wait(1000);
+        cy.url().should('eq', Cypress.env('VUE_APP_URL'));
         menuMensagens();
         cy.wait(1000);
     });
@@ -10,6 +12,7 @@ describe('Modulo Mensagem', function () {
     });
 
     it('Criar Mensagem', function () {
+        cy.url().should('eq', Cypress.env('VUE_APP_URL') + 'administracao/mensagem');
         cy.get('.v-btn--bottom').click();
 
         cy.get('[aria-label="Título"]').type('Titulo Mensagem');
@@ -25,11 +28,10 @@ describe('Modulo Mensagem', function () {
         cy.get(':nth-child(2) > .v-input > .v-input__control > .v-input__slot > .v-label').contains('Ativo');
 
         cy.get('.flex > .theme--dark').click();
-
-        cy.get('.v-snack__content').contains('Cadastro realizado com sucesso!');
     });
 
     it('Editar Mensagem', function () {
+        cy.url().should('eq', Cypress.env('VUE_APP_URL') + 'administracao/mensagem');
         cy.get('[aria-label="Buscar"]').type('Titulo Mensagem');
 
         cy.get(':nth-child(1) > .justify-center > :nth-child(1) > .v-btn__content > .v-icon').click();
@@ -50,6 +52,7 @@ describe('Modulo Mensagem', function () {
     });
 
     it('Excluir Mensagem', function () {
+        cy.url().should('eq', Cypress.env('VUE_APP_URL') + 'administracao/mensagem');
         cy.get('[aria-label="Buscar"]').type('Outro Titulo');
 
         cy.get(':nth-child(1) > .justify-center > :nth-child(2) > .v-btn__content > .v-icon').click();

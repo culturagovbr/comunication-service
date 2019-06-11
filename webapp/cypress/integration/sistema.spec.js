@@ -1,6 +1,8 @@
 describe('Modulo Sistema', function () {
     beforeEach(() => {
-        cy.login('abcd@gmail.com', '123456');
+        cy.login('01234567891', '123456');
+        cy.wait(1000);
+        cy.url().should('eq', Cypress.env('VUE_APP_URL'));
         menuSistema();
         cy.wait(1000);
     });
@@ -10,6 +12,7 @@ describe('Modulo Sistema', function () {
     });
 
     it('Criar Sistema', function () {
+        cy.url().should('eq', Cypress.env('VUE_APP_URL') + 'administracao/sistema');
         cy.get('.v-dialog__activator > .v-btn').click();
 
         cy.get('[aria-label="Descrição"]').type('E-pracas');
@@ -20,10 +23,10 @@ describe('Modulo Sistema', function () {
 
         cy.get('.text-xs-center > .blue').click();
 
-        cy.get('.v-snack__content').contains('Cadastro realizado com sucesso!');
     });
 
     it('Editar Sistema', function () {
+        cy.url().should('eq', Cypress.env('VUE_APP_URL') + 'administracao/sistema');
         cy.get('[aria-label="Buscar"]').type('E-pracas');
 
         cy.get(':nth-child(1) > .justify-center > :nth-child(1) > .v-btn__content > .v-icon').click();
@@ -40,6 +43,7 @@ describe('Modulo Sistema', function () {
     });
 
     it('Excluir Sistema', function () {
+        cy.url().should('eq', Cypress.env('VUE_APP_URL') + 'administracao/sistema');
         cy.get('[aria-label="Buscar"]').type('Sistema Nacional de Cultura');
 
         cy.get(':nth-child(1) > .justify-center > :nth-child(2) > .v-btn__content > .v-icon').click();

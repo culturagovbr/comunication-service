@@ -1,6 +1,8 @@
 describe('Modulo Plataforma', function () {
     beforeEach(() => {
-        cy.login('abcd@gmail.com', '123456');
+        cy.login('01234567891', '123456');
+        cy.wait(1000);
+        cy.url().should('eq', Cypress.env('VUE_APP_URL'));
         menuPlataforma();
         cy.wait(1000);
     });
@@ -10,6 +12,7 @@ describe('Modulo Plataforma', function () {
     });
 
     it('Criar Plataforma', function () {
+        cy.url().should('eq', Cypress.env('VUE_APP_URL') + 'administracao/plataforma');
         cy.get('.v-btn--bottom').click();
 
         cy.get('[aria-label="Descrição"]').type('WhatsApp');
@@ -17,11 +20,10 @@ describe('Modulo Plataforma', function () {
         cy.get('.v-input__slot > .v-label').contains('Ativo');
 
         cy.get('.text-xs-center > .blue').click();
-
-        cy.get('.v-snack__content').contains('Cadastro realizado com sucesso!');
     });
 
     it('Editar Plataforma', function () {
+        cy.url().should('eq', Cypress.env('VUE_APP_URL') + 'administracao/plataforma');
         cy.get(':nth-child(1) > .justify-center > :nth-child(1) > .v-btn__content > .v-icon').click();
 
         cy.get('[aria-label="Descrição"]').clear().type('Telegram');
@@ -32,6 +34,7 @@ describe('Modulo Plataforma', function () {
     });
 
     it('Excluir Plataforma', function () {
+        cy.url().should('eq', Cypress.env('VUE_APP_URL') + 'administracao/plataforma');
         cy.get(':nth-child(2) > .justify-center > :nth-child(2) > .v-btn__content > .v-icon').click();
     });
 });
