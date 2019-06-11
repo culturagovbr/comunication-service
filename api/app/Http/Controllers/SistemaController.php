@@ -22,7 +22,7 @@ class SistemaController extends Controller
 
     public function post(ServerRequestInterface $request)
     {
-        $dados = $request->getParsedBody();
+        $dados = array_filter($request->getParsedBody());
         $sistema = new \App\Services\Sistema();
 
         /**
@@ -34,7 +34,7 @@ class SistemaController extends Controller
 
     public function patch(ServerRequestInterface $request, $id = null)
     {
-        $dados = $request->getParsedBody();
+        $dados = array_filter($request->getParsedBody());
         $sistema = new \App\Services\Sistema();
 
         /**
