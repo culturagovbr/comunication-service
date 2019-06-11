@@ -21,7 +21,9 @@ describe('Testando Tela Inicial', function () {
     // });
 
     it('Recuperar Senha', function () {
-        rota('[href="/recuperar"]');
+        cy.get('.caption > .v-btn__content').click();
+        
+        cy.url().should('eq', Cypress.env('VUE_APP_URL') + 'recuperar');
 
         cy.get('[aria-label="E-mail"]').type('abcd@gmail.com');
 
@@ -29,19 +31,14 @@ describe('Testando Tela Inicial', function () {
 
         cy.get('[aria-label="Confirmar Senha"]').type('123456');
 
-        cy.get('.v-btn').click();
-
-        // cy.get('.v-snack__content').contains('Senha alterada com sucesso!');
+        cy.get('.v-card__actions > .v-btn').click();
+        
+        cy.url().should('eq', Cypress.env('VUE_APP_URL') + 'login');
     });
 });
 
 const telaInicial = () => {
     cy.wait(1000);
-    cy.visit('http://' + Cypress.env('VUE_APP_HOST') + ':' + Cypress.env('VUE_APP_PORT') + '/login');
-};
-
-const rota = (rota) => {
-    cy.get(rota).should('have.attr', 'href').then((href) => {
-        cy.visit('http://' + Cypress.env('VUE_APP_HOST') + ':' + Cypress.env('VUE_APP_PORT') + href)
-    })
+    cy.visit(Cypress.env('VUE_APP_URL') + 'login');
+    cy.url().should('eq', Cypress.env('VUE_APP_URL') + 'login');
 };
