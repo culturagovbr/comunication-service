@@ -1,3 +1,3 @@
 #!/bin/bash
-cp docker-compose-exemplo.yml docker-compose.yml
+cp docker-compose.exemplo docker-compose.yml
 ls
