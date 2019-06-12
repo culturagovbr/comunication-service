@@ -1,0 +1,17 @@
+## example: docker build --build-arg NODE_ENV=development --build-arg API_URL=https://api.example.com
+## References:
+## - https://github.com/ppdeassis/docker-node-nginx-alpine
+
+FROM nginx:1.17-alpine
+
+WORKDIR "/application"
+
+# Reads args and use them to configure the build, setting them as env vars
+ARG EXPOSE_PORT
+ENV EXPOSE_PORT $EXPOSE_PORT
+
+
+COPY . /application
+COPY ./docker/webserver/nginx/nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE $EXPOSE_PORT
