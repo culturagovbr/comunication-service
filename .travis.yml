@@ -45,4 +45,4 @@ script:
 - docker ps
 - cd webapp
 - curl --get http://localhost/v1/sistema
-- $(npm bin)/cypress run --record false
+- $(npm bin)/cypress run --config videoRecording=false
