@@ -22,6 +22,8 @@ services:
       - VUE_APP_WEBSOCKET_HOST=localhost
       - VUE_APP_WEBSOCKET_PORT=8001
       - VUE_APP_JWT_SECRET=SDfsdfQWEFwefWEfEtWERQWasdQWEs
+    links:
+      - api-service:communication-api
 
   api-service:
     container_name: communication-api
