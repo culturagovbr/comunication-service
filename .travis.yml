@@ -3,7 +3,8 @@ php:
   - '7.2'
 branches:
   only:
-  - feature/cypress
+  - develop
+  - master
 env:
   - DOCKER_COMPOSE_VERSION=1.24.0
 
@@ -32,8 +33,7 @@ node_js:
 before_script:
   - cd api
   - composer update
-  - cd ..
-  - cd webapp
+  - cd ../webapp
   - npm install
   - cp .exemplo_env .env
   - cd ..

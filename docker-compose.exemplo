@@ -17,8 +17,7 @@ services:
       #- NODE_CONFIG_ENV=production
       #- NODE_ENV=production
   #      Utilizar config abaixo para utilizacao do container docker Cypress
-#      - VUE_APP_API_HOST=webserver-service
-      - VUE_APP_API_HOST=localhost
+      - VUE_APP_API_HOST=webserver-service
       - VUE_APP_API_PORT=88
       - VUE_APP_WEBSOCKET_HOST=localhost
       - VUE_APP_WEBSOCKET_PORT=8001

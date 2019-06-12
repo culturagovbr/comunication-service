@@ -21,3 +21,4 @@ yarn-error.log*
 *.sw*
 
 composer.lock
+package-lock.json
