@@ -26,7 +26,7 @@ Para reunir todos os módulos acima, foi criada uma stack Docker da aplicação,
 - PHP 7 (php-fpm)
     - Lumen Framework
     - Eloquent ORM
-    - PSR4, PSR7, ...
+    - PSR4, PSR7
 - Nginx
 - Javascript
     - Node
