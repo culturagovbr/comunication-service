@@ -2,7 +2,7 @@ const http = require('http');
 
 const options = {
     host: '0.0.0.0',
-    port: 80,
+    port: process.env.VUE_APP_JWT_SECRET,
     timeout: 2000,
 };
 
