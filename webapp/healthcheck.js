@@ -1,10 +1,12 @@
 const http = require('http');
 
 const options = {
-    host: '0.0.0.0',
-    port: process.env.VUE_APP_JWT_SECRET,
+    host: process.env.VUE_WEBAPP_HOST,
+    port: process.env.VUE_WEBAPP_PORT,
     timeout: 2000,
 };
+
+console.log(process.env.VUE_WEBAPP_HOST, process.env.VUE_WEBAPP_PORT);
 
 const healthCheck = http.request(options, (res) => {
     console.log(`HEALTHCHECK STATUS: ${res.statusCode}`);
