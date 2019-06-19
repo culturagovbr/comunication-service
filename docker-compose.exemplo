@@ -5,9 +5,12 @@ services:
     #    build: ./webapp
     image: culturagovbr/communication-webapp:1.0.2
     container_name: communication-webapp_
+#    env_file:
+#    - .env
     healthcheck:
-      test: ["CMD-SHELL", "node /home/node/app/healthcheck.js"]
-      interval: 10s
+      test: ["CMD", "curl", "-sS", "http://localhost:8080"]
+#      test: ["CMD-SHELL", "node /home/node/app/healthcheck.js"]
+      interval: 20s
       timeout: 5s
       retries: 3
     volumes:
@@ -122,13 +125,13 @@ services:
     - ./database/schema.sql:/docker-entrypoint-initdb.d/0.schema.sql
 
   cypress:
-    image: "cypress/included:3.2.0"
+    image: "cypress/included:3.3.1"
     working_dir: /e2e
     volumes:
     - ./webapp:/e2e
     environment:
     #pass base url to test pointing at the web application
-    - CYPRESS_baseUrl=http://webapp-service:8088
+    - CYPRESS_baseUrl=http://localhost:8080
     depends_on:
       webapp-service:
         condition: service_healthy
