@@ -17,7 +17,7 @@ describe('Testando Tela Inicial', function () {
 
         cy.get(':nth-child(1) > .v-list__tile > .v-list__tile__content > .v-input > .v-input__control > .v-input__slot > .v-input--selection-controls__input > .v-input--selection-controls__ripple').click();
 
-        cy.get('.v-btn').click();
+        cy.get('.v-card__actions > .v-btn').click();
     });
 
     it('Recuperar Senha', function () {
