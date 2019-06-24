@@ -1,0 +1,26 @@
+version: '3'
+services:
+
+  cypress:
+    image: "cypress/included:3.3.1"
+    ipc: host
+    working_dir: /e2e
+    volumes:
+      - ./webapp:/e2e
+    environment:
+      #pass base url to test pointing at the web application
+#      - CYPRESS_baseUrl=http://localhost:8088
+      - CYPRESS_baseUrl=http://webapp-service:8088
+#    depends_on:
+#      webapp-service:
+#        condition: service_healthy
+    networks:
+      - front_default
+    external_links:
+      - webserver-service
+      - webapp-service
+
+networks:
+  front_default:
+#    external: true
+    driver: bridge
