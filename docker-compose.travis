@@ -5,10 +5,8 @@ services:
     #    build: ./webapp
     image: culturagovbr/communication-webapp:1.0.2
     container_name: communication-webapp
-    #    env_file:
-    #    - .env
     healthcheck:
-      test: ["CMD", "curl", "-sS", "http://localhost:8080"]
+      test: ["CMD", "curl", "-sS", "http://localhost:8088"]
       #      test: ["CMD-SHELL", "node /home/node/app/healthcheck.js"]
       interval: 20s
       timeout: 5s

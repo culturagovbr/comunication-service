@@ -126,6 +126,7 @@ services:
 
   cypress-service:
     image: "cypress/included:3.2.0"
+    ipc: host
     working_dir: /e2e
     volumes:
       - ./webapp:/e2e
