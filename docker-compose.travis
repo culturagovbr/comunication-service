@@ -134,8 +134,7 @@ services:
       #pass base url to test pointing at the web application
 #      - CYPRESS_baseUrl=http://webapp-service:8080
     depends_on:
-      webapp-service:
-        condition: service_healthy
+      - webapp-service
 
     links:
       - api-service:communication-api

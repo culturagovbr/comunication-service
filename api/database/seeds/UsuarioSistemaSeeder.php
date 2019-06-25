@@ -21,7 +21,7 @@ class UsuarioSistemaSeeder extends Seeder
 
     private function criarVinculoTeste() {
         DB::table('notificacao.usuario_has_sistema')->insert([
-            'usuario_id' => 16,
+            'usuario_id' => 1,
             'sistema_id' => 6,
         ]);
     }
