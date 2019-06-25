@@ -40,9 +40,9 @@ before_script:
 - cd ..
 - bash ./deploy.sh
 - sudo chmod -R 777 api/storage/
-- docker-compose up -d --build
+- docker-compose up --build
 script:
 - docker ps
 - cd webapp
-- curl --get http://localhost/v1/sistema
+#- curl --get http://localhost/v1/sistema
 #- $(npm bin)/cypress run --config video=false
