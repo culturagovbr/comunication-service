@@ -27,8 +27,6 @@ services:
     #    build: ./webapp
     image: culturagovbr/communication-webapp:1.0.2
     container_name: communication-webapp_
-    #    env_file:
-    #    - .env
     healthcheck:
       test: ["CMD", "curl", "-sS", "http://localhost:8080"]
       #      test: ["CMD-SHELL", "node /home/node/app/healthcheck.js"]
@@ -46,10 +44,8 @@ services:
       - NODE_ENV=development
       #- NODE_CONFIG_ENV=production
       #- NODE_ENV=production
-      # Utilizar a aplicacao no navegador
       - VUE_APP_API_HOST=localhost
       - VUE_APP_API_PORT=88
-      #- VUE_APP_API_PORT=80
       - VUE_WEBAPP_HOST=localhost
       - VUE_WEBAPP_PORT=8088
       - VUE_APP_WEBSOCKET_HOST=localhost
@@ -137,5 +133,3 @@ networks:
   comunication_network:
     name: comunication_network
     driver: bridge
-    # external: true
-    # driver: overlay

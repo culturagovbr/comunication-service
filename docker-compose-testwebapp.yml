@@ -7,11 +7,8 @@ services:
     working_dir: /e2e
     volumes:
       - ./webapp:/e2e
-      - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      #pass base url to test pointing at the web application
-    #  - CYPRESS_baseUrl=http://localhost:8088
-      - CYPRESS_baseUrl=http://localhost:8088
+      - CYPRESS_baseUrl=http://webapp-service:8080
     networks:
       - comunication_network
     external_links:
@@ -20,5 +17,4 @@ services:
 
 networks:
   comunication_network:
-    #driver: bridge
     external: true
