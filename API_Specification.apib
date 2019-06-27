@@ -1,0 +1,179 @@
+FORMAT: 1A
+HOST: https://localhost:88
+
+# Communication Service
+
+Serviço com responsabilidade de centralizar e disparar notificações de diversos tipos para sistemas e plataformas que utilizam.
+
+## Criar Notificaçao [/v1/notificacao]
+### Criação das Notificacoes  [POST]
+* Para a criação das notificacoes será preciso dos seguintes campos
++ Request 200 (application/json)
+    + Attributes
+        + codigo_destinatario: [{ cod_usuario: 101, cod_orgao: 202 }] (string, required)
+        + mensagem_id: 150 (number, required)
+
++ Response 200 (application/json)
+
+        {
+            "apiVersion": "1.0",
+            "data": [
+                      {
+                        "codigo_destinatario": "Algum Destinatario",
+                        "data_envio": "2019-06-27 17:05:14",
+                        "is_notificacao_lida": "",
+                        "mensagem": {
+                          "autor_id": "16",
+                          "created_at": "2019-06-03 19:13:15",
+                          "descricao": "Uma mensagem teste",
+                          "is_ativo": "1",
+                          "mensagem_id": "21",
+                          "sistema_id": "6",
+                          "titulo": "Teste",
+                          "updated_at": "",
+                        },
+                        "mensagem_id": "21",
+                        "notificacao_id": "12"
+                      }
+                    ],
+            "error": []
+        }
+
++ Request 400 (application/json)
+    + Attributes
+        + codigo_destinatario: [{ cod_usuario: 101, cod_orgao: 202 }] (string, required)
+
++ Response 400 (application/json)
+
+        {
+            "apiVersion": "1.0",
+            "data": [],
+            "error": "The mensagem id field is required."
+        }
+
+## Buscar Notificaçoes [/v1/notificacao[/{id}]]
+### Visualizaçao das Notificacoes  [GET]
+* Para a visualizaçao das notificacoes será preciso dos seguintes campos
++ Request 200 (application/json)
+    + Attributes
+        + notificacao_id: 12 (number, optional)
+
++ Response 200 (application/json)
+
+        {
+            "apiVersion": "1.0",
+            "data": [
+                      {
+                        "autor_id": "16"
+                        "codigo_destinatario": "Algum Destinatario"
+                        "data_envio": "2019-06-27 17:05:14"
+                        "descricao": "Uma mensagem teste"
+                        "is_ativo": "1"
+                        "is_notificacao_lida": ""
+                        "mensagem_id": "21"
+                        "notificacao_id": "12"
+                        "sistema": "Sistema Teste"
+                        "sistema_id": "6"
+                        "titulo": "Teste"
+                        "usuario_id": "16"
+                      }
+                    ],
+            "error": []
+        }
+
++ Request 400 (application/json)
+    + Attributes
+        + notificacao_id: 13 (number, optional)
+
++ Response 400 (application/json)
+
+        {
+            "apiVersion": "1.0",
+            "data": [],
+            "error": "No query results for model [App\\Models\\Notificacao] 13"
+        }
+
+## Excluir Notificacao [/v1/notificacao/{id}]
+### Exclusao de Notificacao [DELETE]
+* Para a excluir uma notificacao será preciso dos seguintes campos
++ Request 200 (application/json)
+    + Attributes
+        + notificacao_id: 12 (number, required)
+
++ Response 200 (application/json)
+
+        {
+            "apiVersion": "1.0",
+            "data": true,
+            "error": []
+        }
+
++ Request 400 (application/json)
+    + Attributes
+        + notificacao_id: 13 (number, optional)
+
++ Response 400 (application/json)
+
+        {
+            "apiVersion": "1.0",
+            "data": [],
+            "error": "No query results for model [App\\Models\\Notificacao] 13"
+        }
+
+## Criar Mensagem [/v1/mensagem]
+### Criação das Mensagens  [POST]
+* Para a criação das mensagens será preciso dos seguintes campos
++ Request 200 (application/json)
+    + Attributes
+        + titulo: Um titulo de Mensagem (string, required)
+        + descricao: Aqui vai um texto para o corpo da mensagem (string, required)
+        + sistema_id: 1 (number, required)
+        + autor_id: 16 (number, required)
+        + plataformas: [{descricao: Telegram, plataforma_id: 1}] (array, required)
+
++ Response 200 (application/json)
+
+        {
+            "apiVersion": "1.0",
+            "data": [
+                      {
+                        "autor_id": "16",
+                        "created_at": "2019-06-27 18:51:24",
+                        "descricao": "acsacsacsac",
+                        "is_ativo": "1",
+                        "mensagem_id": "34",
+                        "plataformas":
+                          [
+                            {
+                              "descricao": "Telegram",
+                              "mensagem_has_plataforma":
+                                {
+                                  "mensagem_id": "34",
+                                  "plataforma_id": "5"
+                                },
+                              "mensagem_id": "34",
+                              "plataforma_id": "5"
+                            }
+                          ],
+                        "sistema_id": "1",
+                        "titulo": "dsadsad",
+                        "updated_at": "",
+                      }
+                    ],
+            "error": []
+        }
+
++ Request 400 (application/json)
+    + Attributes
+        + titulo: Um titulo de Mensagem (string, required)
+        + descricao: Aqui vai um texto para o corpo da mensagem (string, required)
+        + autor_id: 16 (number, required)
+        + plataformas: [{descricao: Telegram, plataforma_id: 1}] (array, required)
+
++ Response 400 (application/json)
+
+        {
+            "apiVersion": "1.0",
+            "data": [],
+            "error": "The sistema id field is required."
+        }
