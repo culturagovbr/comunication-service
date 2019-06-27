@@ -7,6 +7,7 @@ use Carbon\Carbon;
 use DB;
 use Validator;
 use App\Models\Usuario as ModeloUsuario;
+use Illuminate\Database\Query\Builder;
 
 class Notificacao implements IService
 {
@@ -24,14 +25,16 @@ class Notificacao implements IService
 
     public function criar(array $dados = []): ModeloNotificacao
     {
+
         $validator = Validator::make($dados, [
-            "codigo_destinatario" => 'required|string',
+            "codigo_destinatario" => 'required|string|min:3',
             "mensagem_id" => 'required|int',
         ]);
 
         if ($validator->fails()) {
             throw new \Exception($validator->errors()->first());
         }
+
 
         $dados = array_merge($dados, [
             'is_ativo' => true,
@@ -41,6 +44,9 @@ class Notificacao implements IService
 
         $modeloNotificacao = ModeloNotificacao::create($dados);
 
+//        $envioEmail = new \App\Services\Email();
+//        $envioEmail->enviarNotificacaoEmail($dados['mensagem_id']);
+
         return $this->obter($modeloNotificacao->notificacao_id);
     }
 
@@ -48,7 +54,7 @@ class Notificacao implements IService
     {
         $validator = Validator::make($dados, [
             "is_notificacao_lida" => 'bool',
-            "codigo_destinatario" => 'string',
+            "codigo_destinatario" => 'string|min:3',
             "mensagem_id" => 'int',
         ]);
 
@@ -75,7 +81,7 @@ class Notificacao implements IService
         $usuario_id,
         $sistema_id,
         $is_notificacao_lida
-    ) : \Illuminate\Support\Collection
+    ): \Illuminate\Support\Collection
     {
         if (is_null($usuario_id)) {
             throw new \Exception('Identificador do usuário obrigatório.');
@@ -97,7 +103,11 @@ class Notificacao implements IService
 //            ->toSql();
 
         if (!is_null($sistema_id)) {
-            $consulta->where('notificacao.mensagem.sistema_id', '=', $sistema_id);
+            $consulta->where(
+                'notificacao.mensagem.sistema_id',
+                '=',
+                $sistema_id
+            );
         }
 
         return $consulta->get();
@@ -106,7 +116,7 @@ class Notificacao implements IService
     public function obterNotificacoesUsuario(
         $usuario_id,
         $is_notificacao_lida
-    ) : \Illuminate\Support\Collection
+    ): \Illuminate\Support\Collection
     {
         if (is_null($usuario_id)) {
             throw new \Exception('Identificador do usuário obrigatório.');
@@ -133,8 +143,7 @@ class Notificacao implements IService
         return $notificacoesUsuario->get();
     }
 
-    private function obterQueryNotificacoesUsuario()
-        : \Illuminate\Database\Query\Builder
+    private function obterQueryNotificacoesUsuario(): Builder
     {
         return DB::table('notificacao.notificacao')
             ->select([
@@ -187,6 +196,7 @@ class Notificacao implements IService
             'usuario_id',
             'nome',
             'email',
+            'cpf',
             'is_ativo',
             'is_admin'
         );
@@ -228,5 +238,69 @@ class Notificacao implements IService
 
         return $this->obter($notificacao_id);
 
+    }
+
+    public function criarMensagemDinamica(array $dados = []) : ModeloNotificacao
+    {
+        if ($this->validarPreenchimentoMensagemExterna($dados)) {
+            throw new \Exception(
+                'Identificador da mensagem ou dados 
+                da mensagem externa não informados.'
+            );
+        }
+        if (!isset($dados['mensagem_id'])
+            && empty($dados['mensagem_id'])) {
+            $serviceMensagem = new \App\Services\Mensagem();
+            $sistemaService = new \App\Services\Sistema();
+            $sistema = $sistemaService->buscarSistemaPorNome($dados['sistema']);
+
+            if($sistema === NULL) {
+                throw new \Exception('Sistema não localizado.');
+            }
+
+            $mensagens = $serviceMensagem->obter(
+                null,
+                ['titulo' => $dados['mensagem_externa_titulo']]
+            );
+
+            if (count($mensagens) < 1) {
+                $mensagem = $serviceMensagem->criar(
+                    [
+                        "titulo" => $dados['mensagem_externa_titulo'],
+                        "descricao" => $dados['mensagem_externa_descricao'],
+                        "sistema_id" => $sistema['sistema_id'],
+                        "autor_id" => $dados['usuario_id'],
+                        "plataformas" => $dados['plataformas']
+                    ]
+                );
+                $dados['mensagem_id'] = $mensagem->mensagem_id;
+            } else {
+                $dados['mensagem_id'] = $mensagens[0]->mensagem_id;
+            }
+        }
+        return $this->criar($dados);
+    }
+
+    private function validarPreenchimentoMensagemExterna(array $dados = [])
+    {
+        if (count($dados) < 1) {
+            return false;
+        }
+
+        $validator = Validator::make($dados, [
+            "mensagem_externa_titulo" => 'required|string|min:3|max:50',
+            "mensagem_externa_descricao" => 'required|string|min:3|max:9999',
+            "sistema" => 'required|string|min:3',
+            "usuario_id" => 'required|int',
+            "plataformas" => 'required|array|min:1',
+            "plataformas.*.plataforma_id" => 'required|int',
+        ]);
+
+        if ($validator->fails()) {
+            throw new \Exception($validator->errors()->first());
+        }
+
+
+        return true;
     }
 }

@@ -1,6 +1,8 @@
 import * as types from './types';
 import $socket from './_auxiliares/socket-client-instance';
 
+export const storeInit = () => {};
+
 export const Socket_connect = ({ commit }, dados) => {
     commit(types.SOCKET_CONNECT, dados);
 };

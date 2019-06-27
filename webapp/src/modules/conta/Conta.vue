@@ -92,7 +92,8 @@
                     <v-card-text>
                         <conta-formulario
                             :item="itemEditado"
-                            :dialog.sync="dialog"/>
+                            :dialog.sync="dialog"
+                            :indiceEditado.sync="indiceEditado"/>
                     </v-card-text>
                 </v-card>
             </v-dialog>
@@ -161,8 +162,8 @@ export default {
             return this.indiceEditado === -1 ? 'Criar' : 'Editar';
         },
         ...mapGetters({
-            contas: 'conta/conta',
-            informacoesConta: 'account/informacoesConta',
+            contas: 'communicationConta/conta',
+            informacoesConta: 'communicationAccount/informacoesConta',
         }),
     },
 
@@ -182,14 +183,14 @@ export default {
     methods: {
 
         ...mapActions({
-            obterContas: 'conta/obterContas',
-            removerConta: 'conta/removerConta',
+            obterContas: 'communicationConta/obterContas',
+            removerConta: 'communicationConta/removerConta',
         }),
 
         editItem(item) {
             const self = this;
             if (self.informacoesConta.is_admin !== true) {
-                self.$store.dispatch('alert/error', 'Usuário sem privilégios administrativos.', { root: true });
+                self.$store.dispatch('communicationAlert/error', 'Usuário sem privilégios administrativos.', { root: true });
             }
             if (self.informacoesConta.is_admin === true) {
                 self.indiceEditado = self.contas.indexOf(item);
@@ -209,7 +210,7 @@ export default {
             // eslint-disable-next-line
             if (confirm('Deseja remover esse item?')) {
                 if (this.informacoesConta.is_admin !== true) {
-                    this.$store.dispatch('alert/error', 'Usuário sem privilégios administrativos.', { root: true });
+                    this.$store.dispatch('communicationAlert/error', 'Usuário sem privilégios administrativos.', { root: true });
                 }
                 if (this.informacoesConta.is_admin === true) {
                     this.removerConta(item.usuario_id);

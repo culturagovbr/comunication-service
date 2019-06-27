@@ -4,12 +4,12 @@ import * as types from './types';
 export const mutations = {
     [types.SOCKET_CONNECT](state, data) {
         console.log(data);
-        state.websocket.isConnected = true;
+        state.isConnected = true;
     },
 
     [types.SOCKET_DISCONNECT](state, data) {
         console.log(data);
-        state.websocket.isConnected = false;
+        state.isConnected = false;
     },
 
     [types.SOCKET_SERVER_ENTRAREMSALA](state, data) {
@@ -21,14 +21,14 @@ export const mutations = {
     },
 
     [types.SOCKET_CLIENT_CONNECTEDUSERS](state, data) {
-        state.websocket.connectedUsers = data;
+        state.connectedUsers = data;
     },
 
     [types.SOCKET_CLIENT_ENTRAREMSALA](state, data) {
         const { sala } = data;
-        const indiceSala = state.websocket.salas.findIndex(valor => valor.sala === sala);
+        const indiceSala = state.salas.findIndex(valor => valor.sala === sala);
         if (indiceSala === -1) {
-            state.websocket.indiceSalaAtual = state.websocket.salas.push({
+            state.indiceSalaAtual = state.salas.push({
                 sala,
                 mensagens: [],
             }) - 1;
@@ -38,11 +38,11 @@ export const mutations = {
     [types.SOCKET_CLIENT_SAIRDASALA](state, data) {
         const { sala } = data;
         const { usuario } = data;
-        const indiceSalaPesquisada = state.websocket.salas.findIndex(valor => valor.sala === sala);
+        const indiceSalaPesquisada = state.salas.findIndex(valor => valor.sala === sala);
         if (indiceSalaPesquisada === -1) {
             return false;
         }
-        const indiceUsuarioSalaPesquisada = state.websocket.salas[indiceSalaPesquisada]
+        const indiceUsuarioSalaPesquisada = state.salas[indiceSalaPesquisada]
             .membros
             .findIndex(membro => membro.email === usuario.email);
 
@@ -50,16 +50,16 @@ export const mutations = {
             return false;
         }
 
-        state.websocket.salas[indiceSalaPesquisada].membros.splice(indiceUsuarioSalaPesquisada, 1);
+        state.salas[indiceSalaPesquisada].membros.splice(indiceUsuarioSalaPesquisada, 1);
     },
 
     [types.SOCKET_CLIENT_MENSAGEMSALA](state, data) {
         const { sala } = data;
         const { mensagem } = data;
         const horario = moment().format();
-        const indiceSala = state.websocket.salas.findIndex(valor => valor.sala === sala);
+        const indiceSala = state.salas.findIndex(valor => valor.sala === sala);
         if (indiceSala !== -1) {
-            state.websocket.salas[indiceSala].mensagens.push({
+            state.salas[indiceSala].mensagens.push({
                 mensagem,
                 horario,
                 usuario: {
@@ -67,7 +67,7 @@ export const mutations = {
                     name: data.usuario.name,
                 },
             });
-            state.websocket.indiceSalaAtual = indiceSala;
+            state.indiceSalaAtual = indiceSala;
         }
     },
 
@@ -75,11 +75,11 @@ export const mutations = {
         const { membros } = data;
         console.log('SOCKET_CLIENT_MEMBROSSALA');
         console.log(data);
-        state.websocket.salas[state.websocket.indiceSalaAtual].membros = membros;
+        state.salas[state.indiceSalaAtual].membros = membros;
     },
 
     [types.DEFINIR_NOME_SALA_ATUAL](state, data) {
         const { nomeSalaAtual } = data;
-        state.websocket.nomeSalaAtual = nomeSalaAtual;
+        state.nomeSalaAtual = nomeSalaAtual;
     },
 };

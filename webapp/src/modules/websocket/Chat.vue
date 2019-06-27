@@ -15,22 +15,32 @@
                         dark
                         prominent
                         color="primary">
+                        <v-btn
+                            v-if="numeroJanela === 2"
+                            :disabled="numeroJanela === 1"
+                            icon>
+                            <v-icon
+                                @click="numeroJanela--">arrow_back
+                            </v-icon>
+                        </v-btn>
                         <v-toolbar-title>
-                            {{ (websocket.nomeSalaAtual) ? `Sala ${websocket.nomeSalaAtual}` : 'Selecione um sistema' }}
+                            {{ (nomeSalaAtual) ? `Sala ${nomeSalaAtual}` : 'Selecione um sistema' }}
 
                         </v-toolbar-title>
+
                         <v-spacer/>
 
                         <v-scale-transition>
                             <v-tooltip
                                 bottom>
                                 <v-badge
-                                    v-if="numeroJanela === 2 && typeof websocket.salas[websocket.indiceSalaAtual] != 'undefined' && typeof websocket.salas[websocket.indiceSalaAtual].membros != 'undefined'"
+                                    v-if="numeroJanela === 2
+                                        && typeof salas[indiceSalaAtual] != 'undefined'
+                                    && typeof salas[indiceSalaAtual].membros != 'undefined'"
                                     slot="activator"
                                     right
                                     color="red">
-                                    <span slot="badge">{{ websocket.salas[websocket.indiceSalaAtual].membros.length }}</span>
-                                    <!--<span slot="badge">{{ 1 }}</span>-->
+                                    <span slot="badge">{{ salas[indiceSalaAtual].membros.length }}</span>
                                     <v-icon
                                         color="glue lighten-1"
                                         large>
@@ -38,10 +48,12 @@
                                     </v-icon>
                                 </v-badge>
                                 <template
-                                    v-if="numeroJanela === 2 && typeof websocket.salas[websocket.indiceSalaAtual] != 'undefined'">
+                                    v-if="numeroJanela === 2 && typeof salas[indiceSalaAtual] != 'undefined'">
                                     <h3>Membros da Sala:</h3>
-                                    <div v-for="(membro) in websocket.salas[websocket.indiceSalaAtual].membros">
-                                        <div>{{ membro.nome }} <{{ membro.email }}></div>
+                                    <div
+                                        v-for="(membro) in salas[indiceSalaAtual].membros"
+                                        :key="membro.email">
+                                        <div>{{ membro.nome }} [{{ membro.email }}]</div>
                                     </div>
                                 </template>
                             </v-tooltip>
@@ -65,10 +77,10 @@
                             <v-window-item :value="2">
                                 <v-card-text>
                                     <v-list
-                                        v-if="websocket.salas.length > 0 && websocket.indiceSalaAtual != null"
+                                        v-if="salas.length > 0 && indiceSalaAtual != null"
                                         subheader>
                                         <template
-                                            v-for="(chat) in websocket.salas[websocket.indiceSalaAtual].mensagens">
+                                            v-for="(chat) in salas[indiceSalaAtual].mensagens">
 
                                             <v-list-tile
                                                 :key="chat.mensagem"
@@ -92,17 +104,7 @@
                     <v-divider/>
 
                     <v-card-actions>
-                        <v-btn
-                            :disabled="numeroJanela === 1"
-                            flat
-                            @click="numeroJanela--">
-                            Voltar
-                        </v-btn>
-                        <v-divider
-                            class="mx-3"
-                            inset
-                            vertical
-                        />
+
                         <v-spacer />
                         <v-btn
                             v-if="numeroJanela === 1"
@@ -164,9 +166,12 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex';
+import WebSocketMixins from './_auxiliares/mixins';
 
 export default {
     name: 'Chat',
+    mixins: [WebSocketMixins],
+
     data() {
         return {
             isEnviando: false,
@@ -180,31 +185,25 @@ export default {
 
     computed: {
         ...mapGetters({
-            websocket: 'websocket/websocket',
-            informacoesConta: 'account/informacoesConta',
+            nomeSalaAtual: 'communicationWebsocket/nomeSalaAtual',
+            salas: 'communicationWebsocket/salas',
+            indiceSalaAtual: 'communicationWebsocket/indiceSalaAtual',
         }),
 
         hasMembrosNaSalaAtual() {
-            if (this.websocket.indiceSalaAtual == null) {
-                return false;
-            }
-            const { indiceSalaAtual } = this.websocket;
-
-            if (typeof this.websocket.salas[indiceSalaAtual] === 'undefined') {
+            if (this.indiceSalaAtual == null) {
                 return false;
             }
 
-            const membrosSalaAtual = this.websocket.salas[indiceSalaAtual].membros;
+            if (typeof this.salas[this.indiceSalaAtual] === 'undefined') {
+                return false;
+            }
+
+            const membrosSalaAtual = this.salas[this.indiceSalaAtual].membros;
             if (typeof membrosSalaAtual === 'undefined') {
                 return false;
             }
             return membrosSalaAtual.length > 0;
-        },
-    },
-    watch: {
-        informacoesConta() {
-            this.sistemas = [];
-            this.sistemas.push(this.informacoesConta.sistemas);
         },
     },
     mounted() {
@@ -212,15 +211,15 @@ export default {
     },
     methods: {
         ...mapActions({
-            websocketEntrarEmSala: 'websocket/Socket_serverEntrarEmSala',
-            websocketMensagemSala: 'websocket/Socket_serverMensagemSala',
-            definirNomeSalaAtual: 'websocket/definirNomeSalaAtual',
+            entrarEmSalaWebsocket: 'communicationWebsocket/Socket_serverEntrarEmSala',
+            mensagemSalaWebsocket: 'communicationWebsocket/Socket_serverMensagemSala',
+            definirNomeSalaAtual: 'communicationWebsocket/definirNomeSalaAtual',
         }),
 
         entrarEmSala() {
             const self = this;
 
-            this.websocketEntrarEmSala({
+            this.entrarEmSalaWebsocket({
                 sala: self.sistema.sistema_id,
             });
             this.definirNomeSalaAtual({
@@ -231,7 +230,7 @@ export default {
         enviarMensagem(evento) {
             const self = this;
 
-            this.websocketMensagemSala({
+            this.mensagemSalaWebsocket({
                 sala: self.sistema.sistema_id,
                 mensagem: self.mensagem,
             });

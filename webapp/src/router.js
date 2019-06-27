@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Login from './modules/conta/Login.vue';
 import Cadastrar from './modules/conta/Cadastrar.vue';
+import RecuperarSenha from './modules/conta/RecuperarSenha.vue';
 import Chat from './modules/websocket/Chat.vue';
 import Administracao from './modules/core/Administracao.vue';
 import Home from './modules/core/Home.vue';
@@ -27,6 +28,11 @@ const routesObject = [
         path: '/cadastrar',
         component: Cadastrar,
         name: 'Cadastrar',
+    },
+    {
+        path: '/recuperar',
+        component: RecuperarSenha,
+        name: 'Recuperar Senha',
     },
     {
         path: '*',
@@ -101,43 +107,36 @@ const router = new Router({
     routes: routesObject,
 });
 
-export const tratarConexaoWebsocket = () => {
-    const token = localStorage.getItem('token');
-    if (store._vm.$socket.disconnected === true && token != null) {
-        const informacoesToken = obterInformacoesJWT();
-        if (informacoesToken !== '') {
-            store._vm.$socket.io.opts.query.token = token;
-            store._vm.$socket.open();
-        }
-    }
-};
+export const isEmpty = string => (!string || string.length === 0);
 
 router.beforeEach((to, from, next) => {
     const publicPages = [
         '/login',
         '/cadastrar',
+        '/recuperar',
     ];
 
     const authRequired = !publicPages.includes(to.path);
-    const loggedIn = localStorage.getItem('token');
+    const communicationToken = localStorage.getItem('communication_token');
+    const tokenValida = !isEmpty(obterInformacoesJWT(communicationToken));
 
     if (to.path === '/logout') {
-        store.dispatch('alert/info', 'Logout realizado com sucesso.', { root: true });
+        store.dispatch('communicationAlert/info', 'Logout realizado com sucesso.', { root: true });
         return next('/login');
     }
 
-    if (authRequired && !loggedIn) {
-        return next('/login');
-    }
 
     try {
-        obterInformacoesJWT();
-        tratarConexaoWebsocket();
-
+        if (authRequired && !tokenValida) {
+            const error = 'Token Expirada.';
+            localStorage.removeItem('token');
+            throw error;
+        }
         return next();
     } catch (Exception) {
-        localStorage.removeItem('token');
-        store.dispatch('alert/error', `Erro: ${Exception}`, { root: true });
+        store.dispatch('communicationAlert/error', `Erro: ${Exception}`, {
+            root: true,
+        });
         return next('/login');
     }
 });

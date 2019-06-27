@@ -50,7 +50,7 @@
                                             slot="activator"
                                             flat
                                             icon
-                                            @click="showItem(minhaNotificacao)"
+                                            @click="exibirItem(minhaNotificacao)"
                                         >
                                             <v-icon>visibility</v-icon>
                                         </v-btn>
@@ -117,7 +117,7 @@
                     <v-spacer/>
                     <v-btn
                         color="error"
-                        @click.native="closeBadgeDialog">Fechar</v-btn>
+                        @click.native="fecharDialogoSininho">Fechar</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
@@ -204,11 +204,12 @@
 </template>
 
 <script>
-
 import { mapActions, mapGetters } from 'vuex';
+import WebSocketMixins from '../websocket/_auxiliares/mixins';
 
 export default {
     name: 'NotificacaoBadge',
+    mixins: [WebSocketMixins],
     data() {
         return {
             dialog: false,
@@ -242,18 +243,17 @@ export default {
             menu: false,
             message: false,
             hints: true,
+            usuario: {
+                nome: '',
+                email: '',
+                sistema: '',
+            },
         };
     },
     computed: {
         ...mapGetters({
-            notificacoesBadge: 'notificacao/notificacoesBadge',
-            informacoesConta: 'account/informacoesConta',
+            notificacoesBadge: 'communicationNotificacao/notificacoesBadge',
         }),
-    },
-    watch: {
-        dialog(val) {
-            return val || this.closeBadgeDialog();
-        },
     },
     mounted() {
         if (this.notificacoesBadge == null || this.notificacoesBadge.length === 0) {
@@ -267,10 +267,10 @@ export default {
     },
     methods: {
         ...mapActions({
-            obterNotificacoes: 'notificacao/obterNotificacoes',
-            lerNotificacao: 'notificacao/lerNotificacao',
+            obterNotificacoes: 'communicationNotificacao/obterNotificacoes',
+            lerNotificacao: 'communicationNotificacao/lerNotificacao',
         }),
-        closeBadgeDialog() {
+        fecharDialogoSininho() {
             const self = this;
             self.dialog = false;
             setTimeout(() => {
@@ -278,7 +278,7 @@ export default {
                 self.indiceEditado = -1;
             }, 300);
         },
-        showItem(item) {
+        exibirItem(item) {
             this.notificacao = item;
             this.dialogNotificacao = true;
             this.lerNotificacao(item);

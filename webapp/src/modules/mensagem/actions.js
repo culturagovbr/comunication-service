@@ -1,6 +1,8 @@
 import * as types from './types';
 import { requisicaoAutorizada } from '../account/_auxiliares/requisicao-autorizada';
 
+export const storeInit = () => {};
+
 export const obterMensagems = ({ dispatch, commit }) => {
     requisicaoAutorizada.get(`http://${process.env.VUE_APP_API_HOST}:${process.env.VUE_APP_API_PORT}/v1/mensagem`)
         .then((response) => {
@@ -8,7 +10,7 @@ export const obterMensagems = ({ dispatch, commit }) => {
             commit(types.DEFINIR_MENSAGENS, data.data);
         })
         .catch((error) => {
-            dispatch('alert/error', error.response.data.error, {
+            dispatch('communicationAlert/error', error.response.data.error, {
                 root: true,
             });
         });
@@ -19,7 +21,7 @@ export const removerMensagem = ({ dispatch, commit }, mensagemId) => {
         .then(() => {
             commit(types.REMOVER_MENSAGEM, mensagemId);
         }).catch((error) => {
-            dispatch('alert/error', error.response.data.error, {
+            dispatch('communicationAlert/error', error.response.data.error, {
                 root: true,
             });
         });
@@ -30,9 +32,9 @@ export const cadastrarMensagem = ({ dispatch, commit }, mensagem) => {
         .then((response) => {
             const { data } = response;
             commit(types.ACRESCENTAR_MENSAGEM, data.data);
-            dispatch('alert/success', 'Cadastro realizado com sucesso!', { root: true });
+            dispatch('communicationAlert/success', 'Cadastro realizado com sucesso!', { root: true });
         }).catch((error) => {
-            dispatch('alert/error', error.response.data.error, {
+            dispatch('communicationAlert/error', error.response.data.error, {
                 root: true,
             });
         });
@@ -43,7 +45,7 @@ export const atualizarMensagem = ({ dispatch, commit }, mensagem) => requisicaoA
         commit(types.ATUALIZAR_MENSAGEM, mensagem);
     })
     .catch((error) => {
-        dispatch('alert/error', error.response.data.error, {
+        dispatch('communicationAlert/error', error.response.data.error, {
             root: true,
         });
     });

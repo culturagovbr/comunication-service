@@ -1,0 +1,6 @@
+{
+  "env": {
+    "VUE_APP_URL": "http://webapp-service:8080/"
+  },
+  "screenshotOnRunFailure": false
+}

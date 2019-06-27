@@ -119,4 +119,15 @@ $app->router->group([
     require __DIR__ . '/../routes/web.php';
 });
 
+$app->withFacades(true, [
+    'Illuminate\Support\Facades\Mail' => 'Mail',
+]);
+$app->register(Illuminate\Mail\MailServiceProvider::class);
+$app->register(App\Providers\AppServiceProvider::class);
+$app->configure('services');
+$app->configure('mail');
+$app->alias('mailer', Illuminate\Mail\Mailer::class);
+$app->alias('mailer', Illuminate\Contracts\Mail\Mailer::class);
+$app->alias('mailer', Illuminate\Contracts\Mail\MailQueue::class);
+
 return $app;

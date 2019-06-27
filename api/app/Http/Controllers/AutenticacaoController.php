@@ -25,9 +25,8 @@ class AutenticacaoController extends Controller
              * @var \Illuminate\Http\Response $response
              */
             $response = response();
-
             $conta = new \App\Services\Conta();
-            $usuario = $conta->autenticar($request);
+            $usuario = $conta->tratarConta($request);
             $jwt = new \App\Services\JWT();
 
             return $response->json($jwt->criarToken($usuario), 200);

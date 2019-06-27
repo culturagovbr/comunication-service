@@ -16,17 +16,18 @@ class Conta implements IService
             'usuario_id',
             'nome',
             'email',
+            'cpf',
             'is_ativo',
             'is_admin'
         );
         //ModeloMensagem::with('plataformas')->get();
         if (!empty(trim($id))) {
-            $data = $modelUsuario->where('usuario_id', $id)->findOrFail($id);
+            $dados = $modelUsuario->where('usuario_id', $id)->findOrFail($id);
         } else {
-            $data = $modelUsuario->get();
+            $dados = $modelUsuario->get();
         }
 
-        return $data;
+        return $dados;
     }
 
     public function criar(array $dados = [])
@@ -34,8 +35,9 @@ class Conta implements IService
         try {
             $validator = Validator::make($dados, [
                 "nome" => 'required|string|min:3|max:50',
+                "cpf" => 'required|string|min:11|max:11',
                 "email" => 'required|string|min:3|max:50',
-                "password" => 'required|string|min:3|max:50',
+                "password" => 'string|min:3|max:50',
                 "sistemas" => 'array',
             ]);
 
@@ -46,24 +48,49 @@ class Conta implements IService
             /**
              * @var $usuarioExistente \Illuminate\Database\Eloquent\Collection
              */
-            $usuarioExistente = ModeloUsuario::where('email', $dados['email'])->get();
+            $usuarioExistente = ModeloUsuario::where(
+                'email',
+                $dados['email']
+            )->get();
             if (count($usuarioExistente->toArray()) > 0) {
                 throw new \Exception("E-mail já cadastrado.");
+            }
+
+            /**
+             * @var $usuarioExistente \Illuminate\Database\Eloquent\Collection
+             */
+            $usuarioExistente = ModeloUsuario::where(
+                'cpf',
+                $dados['cpf']
+            )->get();
+            if (count($usuarioExistente->toArray()) > 0) {
+                throw new \Exception("CPF já cadastrado.");
             }
 
             $dados = array_merge($dados, [
                 'is_ativo' => true
             ]);
 
-            if(!isset($dados['is_admin'])) {
+            if (!isset($dados['is_admin'])) {
                 $dados['is_admin'] = false;
             }
 
-            $dados['password'] = password_hash($dados['password'], PASSWORD_BCRYPT);
+            if (isset($dados['password']) && !empty($dados['password'])) {
+//                $envioEmail = new \App\Services\Email();
+//                $envioEmail->enviarEmailContaCriada($dados);
+
+                $dados['password'] = password_hash(
+                    $dados['password'],
+                    PASSWORD_BCRYPT
+                );
+            }
             $modeloUsuario = ModeloUsuario::create($dados);
 
-            if(isset($dados['sistemas']) && count($dados['sistemas']) > 0) {
-                $this->vincularSistema($modeloUsuario->usuario_id, $dados['sistemas']);
+            if (isset($dados['sistemas']) && count($dados['sistemas']) > 0) {
+                $this->vincularSistema(
+                    $modeloUsuario->usuario_id,
+                    $dados['sistemas']
+                );
             }
 
             return $this->obter($modeloUsuario->usuario_id);
@@ -76,7 +103,7 @@ class Conta implements IService
     {
         $validator = Validator::make($dados, [
             "nome" => 'required|string|min:3|max:50',
-            "email" => 'required|string|min:3|max:50'
+            "email" => 'required|string|min:3|max:50',
         ]);
         if ($validator->fails()) {
             throw new \Exception($validator->errors()->first());
@@ -107,8 +134,25 @@ class Conta implements IService
         return ModeloUsuario::where('usuario_id', $id)->update($dados);
     }
 
-    public function recuperarSenha()
+    public function recuperarSenha($dados)
     {
+        $validator = Validator::make($dados, [
+            "password" => 'required|string|min:3|max:50',
+            "email" => 'required|string|min:3|max:50'
+        ]);
+
+        if ($validator->fails()) {
+            throw new \Exception($validator->errors()->first());
+        }
+
+//        $envioEmail = new \App\Services\Email();
+//        $envioEmail->enviarNovaSenha($dados);
+
+        if (isset($dados['password']) && !empty($dados['password'])) {
+            $dados['password'] = password_hash($dados['password'], PASSWORD_BCRYPT);
+        }
+
+        return ModeloUsuario::where('email', $dados['email'])->update($dados);
 
     }
 
@@ -139,51 +183,85 @@ class Conta implements IService
     public function desvincularSistemaUsuario($usuario_id)
     {
         $usuario = ModeloUsuario::find($usuario_id);
-        if($usuario) {
+        if ($usuario) {
             return $usuario->sistemas()->detach();
         }
     }
 
-    public function remover($id, $dadosUsuarioLogado)
+    public function remover($usuario_id, $dadosUsuarioLogado)
     {
-        $usuario = ModeloUsuario::findOrFail($id);
-        if ($dadosUsuarioLogado['usuario_id'] != $id) {
+        $usuario = ModeloUsuario::findOrFail($usuario_id);
+        if ($dadosUsuarioLogado['usuario_id'] != $usuario_id) {
 
             $usuarios = $usuario->sistemas();
-            $usuarios->where('usuario_id', '=', $id)->detach();
+            $usuarios->where('usuario_id', '=', $usuario_id)->detach();
 
             return $usuario->delete();
         }
     }
 
-    public function autenticar(\Illuminate\Http\Request $request) : ModeloUsuario
+    public function autenticar(\Illuminate\Http\Request $request): ?ModeloUsuario
     {
-        $email = $request->input('email');
-        if(empty($email)) {
-            throw new \Exception('Item `email` não informado.');
+        $cpf = $request->input('cpf');
+        if (empty($cpf)) {
+            throw new \Exception('Item `cpf` não informado.');
         }
 
-        $senha = $request->input('password');
-        if(empty($senha)) {
-            throw new \Exception('Item `password` não informado.');
+        $usuarioExistente = ModeloUsuario::where(
+            'cpf',
+            $cpf
+        )->first();
+        if (!$usuarioExistente) {
+            return null;
         }
 
-        $usuarioAtivo = ModeloUsuario::where(
-            'email',
-            $email
-        )->where('is_ativo', true)->first();
-        if (!$usuarioAtivo) {
+        if ($usuarioExistente->is_ativo !== true) {
             throw new \Exception('Usuario inativo.');
         }
 
-        $senhaBanco = $usuarioAtivo->password;
-
-        if (!$this->validarSenha($senha, $senhaBanco)) {
-            throw new \Exception('Email ou senha incorretos.');
+        $senhaBanco = $usuarioExistente->password;
+        $senha = $request->input('password');
+        if (empty($senha)) {
+            $usuarioExistente->is_admin = false;
         }
 
-        return $usuarioAtivo;
+        if (!empty($senha) && !$this->validarSenha($senha, $senhaBanco)) {
+            throw new \Exception('CPF ou senha incorretos.');
+        }
 
+        return $usuarioExistente;
+
+    }
+
+    public function tratarConta(\Illuminate\Http\Request $request): ?ModeloUsuario
+    {
+        try {
+            $usuario = $this->autenticar($request);
+            $dadosPost = array_filter($request->post());
+            if (is_null($usuario)) {
+                if (!isset($dadosPost['nome'])) {
+                    throw new \Exception('Usuario não informado.');
+                }
+                if (!isset($dadosPost['sistema'])) {
+                    throw new \Exception('Sistema não informado.');
+                }
+                $sistemaService = new \App\Services\Sistema();
+                $sistema = $sistemaService->buscarSistemaPorNome(
+                    $dadosPost['sistema']
+                );
+                if ($sistema === NULL) {
+                    throw new \Exception('Sistema não localizado.');
+                }
+                $dadosPost['sistemas'][]['sistema_id'] = $sistema['sistema_id'];
+
+                $usuario = $this->criar($dadosPost);
+            }
+
+            return $usuario;
+
+        } catch (\Exception $exception) {
+            throw $exception;
+        }
     }
 
     private function validarSenha(string $senha, string $senhaBanco)

@@ -12,7 +12,7 @@ class NotificacaoSistemaController extends Controller
 {
     public function post(ServerRequestInterface $request)
     {
-        $dados = $request->getParsedBody();
+        $dados = array_filter($request->getParsedBody());
         $notificacao = new \App\Services\Notificacao();
 
         /**

@@ -82,7 +82,8 @@ export default {
     }),
     computed: {
         ...mapGetters({
-            mensagens: 'mensagem/mensagens',
+            mensagens: 'communicationMensagem/mensagens',
+            informacoesConta: 'communicationAccount/informacoesConta',
         }),
     },
     watch: {
@@ -115,9 +116,9 @@ export default {
     methods: {
 
         ...mapActions({
-            cadastrarNotificacao: 'notificacao/cadastrarNotificacao',
-            atualizarNotificacao: 'notificacao/atualizarNotificacao',
-            obterMensagems: 'mensagem/obterMensagems',
+            cadastrarNotificacao: 'communicationNotificacao/cadastrarNotificacao',
+            atualizarNotificacao: 'communicationNotificacao/atualizarNotificacao',
+            obterMensagems: 'communicationMensagem/obterMensagems',
         }),
 
         save() {

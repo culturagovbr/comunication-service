@@ -21,6 +21,14 @@
                         required
                         label="E-mail"/>
                     <v-text-field
+                            :mask="'###.###.###-##'"
+                            v-model="itemEditado.cpf"
+                            :rules="[rules.required, rules.minLengthCPF]"
+                            prepend-icon="person"
+                            required
+                            label="CPF"/>
+                    <v-text-field
+                        v-if="informacoesConta.user_id === itemEditado.user_id || indiceEditado === -1"
                         v-validate="{ required: true, min: 6 }"
                         v-model="itemEditado.password"
                         :rules="[rules.required, rules.minLength]"
@@ -98,20 +106,25 @@ export default {
     props: {
         item: {
             type: Object,
-            default: () => {
-            },
+            default: () => {},
+        },
+        indiceEditado: {
+            type: Number,
+            default: 0,
         },
     },
     data: () => ({
         carregando: false,
         valid: true,
         itemEditado: {},
+        emailEnviado: '',
         defaultItem: {
             usuario_id: null,
             descricao: '',
             is_ativo: true,
             is_admin: false,
             sistemas: [],
+            cpf: '',
         },
         rules: {
             required: value => !!value || 'Campo Obrigatório.',
@@ -122,12 +135,14 @@ export default {
                 const pattern = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                 return pattern.test(value) || 'E-mail inválido.';
             },
+            minLengthCPF: object => (object != null && object.length != null && object.length === 11) || 'Campo obrigatório.',
         },
     }),
 
     computed: {
         ...mapGetters({
-            sistemas: 'sistema/sistema',
+            sistemas: 'communicationSistema/sistema',
+            informacoesConta: 'communicationAccount/informacoesConta',
         }),
     },
 
@@ -146,9 +161,9 @@ export default {
     methods: {
 
         ...mapActions({
-            cadastrarConta: 'conta/cadastrarConta',
-            obterSistemas: 'sistema/obterSistemas',
-            atualizarConta: 'conta/atualizarConta',
+            cadastrarConta: 'communicationConta/cadastrarConta',
+            obterSistemas: 'communicationSistema/obterSistemas',
+            atualizarConta: 'communicationConta/atualizarConta',
         }),
 
         save() {
@@ -167,6 +182,7 @@ export default {
         close() {
             this.itemEditado = Object.assign({}, this.defaultItem);
             this.$emit('update:dialog', false);
+            this.$emit('update:indiceEditado', -1);
         },
     },
 };

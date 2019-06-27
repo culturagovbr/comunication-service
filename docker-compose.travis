@@ -1,0 +1,144 @@
+version: '2.1'
+services:
+
+  webapp-service:
+    #    build: ./webapp
+    image: culturagovbr/communication-webapp:1.0.2
+    container_name: communication-webapp
+    #    env_file:
+    #    - .env
+    healthcheck:
+      test: ["CMD", "curl", "-sS", "http://localhost:8080"]
+      #      test: ["CMD-SHELL", "node /home/node/app/healthcheck.js"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+    volumes:
+      - ./webapp:/home/node/app
+    command:
+      sh -c 'npm i && npm run serve'
+    ports:
+      - "8088:8080"
+    environment:
+      - NODE_CONFIG_ENV=development
+      - NODE_ENV=development
+      #- NODE_CONFIG_ENV=production
+      #- NODE_ENV=production
+      #      Utilizar config abaixo para utilizacao do container docker Cypress
+      - VUE_APP_API_HOST=webserver-service
+      - VUE_APP_API_PORT=80
+      # Utilizar a aplicacao no navegador
+#      - VUE_APP_API_HOST=localhost
+#      - VUE_APP_API_PORT=88
+      - VUE_WEBAPP_HOST=localhost
+      - VUE_WEBAPP_PORT=8088
+      - VUE_APP_WEBSOCKET_HOST=localhost
+      - VUE_APP_WEBSOCKET_PORT=8001
+      - VUE_APP_JWT_SECRET=SDfsdfQWEFwefWEfEtWERQWasdQWEs
+    links:
+      - api-service:communication-api
+
+  api-service:
+    container_name: communication-api
+    #    build: ./api
+    image: culturagovbr/communication-php-fpm:1.2.1
+    working_dir: /application
+    volumes:
+      - ./api:/application
+      - ./api/docker/php-fpm/php-ini-overrides.ini:/etc/php/7.2/fpm/conf.d/99-overrides.ini
+    environment:
+      #- UPDATE_COMPOSER_DEPENDENCIES=true
+      - USE_PHP_FPM=true
+      - DB_CONNECTION=pgsql
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - APP_KEY=
+      - APP_TIMEZONE=UTC
+      - LOG_CHANNEL=stack
+      - LOG_SLACK_WEBHOOK_URL=
+      - DB_HOST=database-service
+      - DB_PORT=5432
+      - DB_DATABASE=notificacao
+      - DB_USERNAME=notificacao
+      - DB_PASSWORD=senhaNotificacao
+      - CACHE_DRIVER=file
+      - QUEUE_DRIVER=sync
+      - JWT_SECRET=SDfsdfQWEFwefWEfEtWERQWasdQWEs
+      - MAIL_DRIVER=smtp
+      - MAIL_HOST=smtp.mailtrap.io
+      - MAIL_PORT=2525
+      - MAIL_USERNAME=
+      - MAIL_PASSWORD=
+      - MAIL_ENCRYPTION=tls
+      - MAIL_FROM_ADDRESS=hello@example.com
+      - MAIL_FROM_NAME=Example app
+    depends_on:
+      database-service:
+        condition: service_healthy
+    links:
+      - database-service:communication-database
+    restart: on-failure
+
+  webserver-service:
+    build:
+      context: ./api
+      dockerfile: WebserverDockerfile
+      args:
+        EXPOSE_PORT: 80
+    image: culturagovbr/communication-webserver-nginx:1.0.0
+    container_name: communication-webserver
+    #working_dir: /application
+    #volumes:
+    #  - ./api:/application
+    #  - ./api/docker/webserver/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - "88:80"
+    depends_on:
+      - api-service
+
+  websocket-service:
+    #    build: ./websocket
+    image: culturagovbr/communication-websocket-nodejs:1.0.1
+    container_name: communication-websocket
+    ports:
+      - "8001:8001"
+    depends_on:
+      - api-service
+
+  database-service:
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U notificacao -d notificacao || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    image: postgres:10
+    container_name: communication-database
+    environment:
+      - POSTGRES_PASSWORD=senhaNotificacao
+      - POSTGRES_USER=notificacao
+      - POSTGRES_DB=notificacao
+      - POSTGRES_DB_TEST=notificacao-test
+    ports:
+      - "5433:5432"
+    expose:
+      - "5432"
+    volumes:
+      - ./database/docker-data/postgres:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/0.schema.sql
+
+  cypress:
+    image: "cypress/included:3.3.1"
+    ipc: host
+    working_dir: /e2e
+    volumes:
+      - ./webapp:/e2e
+#    environment:
+      #pass base url to test pointing at the web application
+#      - CYPRESS_baseUrl=http://webapp-service:8080
+    depends_on:
+      webapp-service:
+        condition: service_healthy
+
+    links:
+      - api-service:communication-api
+      - webapp-service
