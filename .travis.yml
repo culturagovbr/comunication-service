@@ -3,8 +3,7 @@ php:
 - '7.2'
 branches:
   only:
-  - develop
-  - master
+  - test
 env:
 - DOCKER_COMPOSE_VERSION=1.24.0
 
@@ -38,9 +37,10 @@ before_script:
 - npm install
 - cp .exemplo_env .env
 - cd ..
-- bash ./deploy.sh
 - sudo chmod -R 777 api/storage/
-- docker-compose up --build
+# - docker-compose up --build -d
+- docker-compose up -d
+- docker-compose -f docker-compose-testwebapp.yml up --force-recreate --exit-code-from cypress
 script:
 - docker ps
 - cd webapp
