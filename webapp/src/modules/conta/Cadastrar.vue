@@ -145,7 +145,6 @@ export default {
     methods: {
         ...mapActions({
             registrar: 'communicationAccount/registrar',
-            enviarEmail: 'communicationConta/enviarEmail',
             obterSistemas: 'communicationSistema/obterSistemas',
         }),
         tratarSubmissao() {
@@ -153,7 +152,6 @@ export default {
                 this.registrar(this.user).then(() => {
                     this.$router.push('/login');
                 });
-                this.enviarEmail(this.user);
             }
         },
     },

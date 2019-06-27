@@ -1,0 +1,20 @@
+version: '3'
+services:
+
+  cypress:
+    image: "cypress/included:3.3.1"
+    ipc: host
+    working_dir: /e2e
+    volumes:
+      - ./webapp:/e2e
+    environment:
+      - CYPRESS_baseUrl=http://webapp-service:8080
+    networks:
+      - comunication_network
+    external_links:
+      - webserver-service
+      - webapp-service
+
+networks:
+  comunication_network:
+    external: true

@@ -1,47 +1,48 @@
 language: php
 php:
-  - '7.2'
+- '7.2'
 branches:
   only:
-  - develop
-  - master
+  - test
 env:
-  - DOCKER_COMPOSE_VERSION=1.24.0
+- DOCKER_COMPOSE_VERSION=1.24.0
 
 before_install:
-  - sudo rm /usr/local/bin/docker-compose
-  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
-  - docker-compose --version
+- sudo rm /usr/local/bin/docker-compose
+- curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+- chmod +x docker-compose
+- sudo mv docker-compose /usr/local/bin
+- docker-compose --version
 addons:
   apt:
     packages:
-      - libgconf-2-4
-      -  xvfb
-      - libgtk2.0-0
-      - libnotify-dev
-      - libnss3
-      - libxss1
-      - libasound2
+    - libgconf-2-4
+    - xvfb
+    - libgtk2.0-0
+    - libnotify-dev
+    - libnss3
+    - libxss1
+    - libasound2
 cache:
   npm: true
   directories:
-    - ~/.cache
+  - ~/.cache
 node_js:
-  - '8.9.4'
+- '8.9.4'
 before_script:
-  - cd api
-  - composer update
-  - cd ../webapp
-  - npm install
-  - cp .exemplo_env .env
-  - cd ..
-  - bash ./deploy.sh
-  - sudo chmod -R 777 api/storage/
-  - docker-compose up -d --build
+- cd api
+- composer update
+- cd ..
+- cd webapp
+- npm install
+- cp .exemplo_env .env
+- cd ..
+- sudo chmod -R 777 api/storage/
+# - docker-compose up --build -d
+- docker-compose up -d
+- docker-compose -f docker-compose-testwebapp.yml up --force-recreate --exit-code-from cypress
 script:
-  - docker ps
-  - cd webapp
-  - curl --get http://localhost/v1/sistema
-  - $(npm bin)/cypress run
+- docker ps
+- cd webapp
+#- curl --get http://localhost/v1/sistema
+#- $(npm bin)/cypress run --config video=false

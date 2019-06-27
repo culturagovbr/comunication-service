@@ -18,6 +18,7 @@ describe('Modulo Conta', function () {
 
         cy.get('[aria-label="Nome"]').type('Jean Doe');
         cy.get('[aria-label="E-mail"]').type('jean.doe@gmail.com');
+        cy.get('[aria-label="CPF"]').type('01234567892');
         cy.get('[aria-label="Senha"]').type('123456');
         cy.wait(1000);
 
@@ -51,6 +52,9 @@ describe('Modulo Conta', function () {
         cy.wait(1000);
 
         cy.get('[aria-label="E-mail"]').clear().type('john.doe@gmail.com');
+        cy.wait(1000);
+    
+        cy.get('[aria-label="CPF"]').clear().type('01234567893');
         cy.wait(1000);
 
         cy.get(':nth-child(2) > .v-input > .v-input__control > .v-input__slot > .v-input--selection-controls__input > .v-input--selection-controls__ripple').click();

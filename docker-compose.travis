@@ -1,32 +1,12 @@
-version: '3.5'
+version: '2.1'
 services:
-  database-service:
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U notificacao -d notificacao || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-    image: postgres:10
-    container_name: communication-database
-    environment:
-      - POSTGRES_PASSWORD=senhaNotificacao
-      - POSTGRES_USER=notificacao
-      - POSTGRES_DB=notificacao
-      - POSTGRES_DB_TEST=notificacao-test
-    ports:
-      - "5433:5432"
-    expose:
-      - "5432"
-    volumes:
-      - ./database/docker-data/postgres:/var/lib/postgresql/data
-      - ./database/schema.sql:/docker-entrypoint-initdb.d/0.schema.sql
-    networks:
-      - comunication_network
-      
+
   webapp-service:
     #    build: ./webapp
     image: culturagovbr/communication-webapp:1.0.2
-    container_name: communication-webapp_
+    container_name: communication-webapp
+    #    env_file:
+    #    - .env
     healthcheck:
       test: ["CMD", "curl", "-sS", "http://localhost:8080"]
       #      test: ["CMD-SHELL", "node /home/node/app/healthcheck.js"]
@@ -44,8 +24,12 @@ services:
       - NODE_ENV=development
       #- NODE_CONFIG_ENV=production
       #- NODE_ENV=production
-      - VUE_APP_API_HOST=localhost
-      - VUE_APP_API_PORT=88
+      #      Utilizar config abaixo para utilizacao do container docker Cypress
+      - VUE_APP_API_HOST=webserver-service
+      - VUE_APP_API_PORT=80
+      # Utilizar a aplicacao no navegador
+#      - VUE_APP_API_HOST=localhost
+#      - VUE_APP_API_PORT=88
       - VUE_WEBAPP_HOST=localhost
       - VUE_WEBAPP_PORT=8088
       - VUE_APP_WEBSOCKET_HOST=localhost
@@ -53,11 +37,9 @@ services:
       - VUE_APP_JWT_SECRET=SDfsdfQWEFwefWEfEtWERQWasdQWEs
     links:
       - api-service:communication-api
-    networks:
-      - comunication_network
 
   api-service:
-    container_name: communication-api_
+    container_name: communication-api
     #    build: ./api
     image: culturagovbr/communication-php-fpm:1.2.1
     working_dir: /application
@@ -91,13 +73,11 @@ services:
       - MAIL_FROM_ADDRESS=hello@example.com
       - MAIL_FROM_NAME=Example app
     depends_on:
-      - database-service
+      database-service:
+        condition: service_healthy
     links:
-      - database-service
-      # CONTAINER:ALIAS
+      - database-service:communication-database
     restart: on-failure
-    networks:
-      - comunication_network
 
   webserver-service:
     build:
@@ -106,7 +86,7 @@ services:
       args:
         EXPOSE_PORT: 80
     image: culturagovbr/communication-webserver-nginx:1.0.0
-    container_name: communication-webserver_
+    container_name: communication-webserver
     #working_dir: /application
     #volumes:
     #  - ./api:/application
@@ -115,21 +95,50 @@ services:
       - "88:80"
     depends_on:
       - api-service
-    networks:
-      - comunication_network
 
   websocket-service:
     #    build: ./websocket
     image: culturagovbr/communication-websocket-nodejs:1.0.1
-    container_name: communication-websocket_
+    container_name: communication-websocket
     ports:
       - "8001:8001"
     depends_on:
       - api-service
 
-# docker network create comunication_network
+  database-service:
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U notificacao -d notificacao || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    image: postgres:10
+    container_name: communication-database
+    environment:
+      - POSTGRES_PASSWORD=senhaNotificacao
+      - POSTGRES_USER=notificacao
+      - POSTGRES_DB=notificacao
+      - POSTGRES_DB_TEST=notificacao-test
+    ports:
+      - "5433:5432"
+    expose:
+      - "5432"
+    volumes:
+      - ./database/docker-data/postgres:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/0.schema.sql
 
-networks:
-  comunication_network:
-    name: comunication_network
-    driver: bridge
+  cypress:
+    image: "cypress/included:3.3.1"
+    ipc: host
+    working_dir: /e2e
+    volumes:
+      - ./webapp:/e2e
+#    environment:
+      #pass base url to test pointing at the web application
+#      - CYPRESS_baseUrl=http://webapp-service:8080
+    depends_on:
+      webapp-service:
+        condition: service_healthy
+
+    links:
+      - api-service:communication-api
+      - webapp-service
