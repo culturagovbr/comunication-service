@@ -16,6 +16,7 @@ Serviço com responsabilidade de centralizar e disparar notificações de divers
   - Node
   - VueJS + VueX + Vuetify
 - Postgres
+- Cypress
 
 ## Módulos
 
