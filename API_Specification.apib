@@ -177,3 +177,112 @@ Serviço com responsabilidade de centralizar e disparar notificações de divers
             "data": [],
             "error": "The sistema id field is required."
         }
+
+## Buscar Mensagens [/v1/mensagem[/{id}]]
+### Visualizaçao das Mensagens  [GET]
+* Para a visualizaçao das mensagens será preciso dos seguintes campos
++ Request 200 (application/json)
+    + Attributes
+        + mensagem_id: 34 (number, optional)
+
++ Response 200 (application/json)
+
+        {
+            "apiVersion": "1.0",
+            "data": [
+                      {
+                        "mensagem_id": "34",
+                        "titulo": "dsadsad",
+                        "descricao": "acsacsacsac",
+                        "sistema_id": "1",
+                        "autor_id": "16",
+                        "is_ativo": "1",
+                        "created_at": "2019-06-27 18:51:24",
+                        "updated_at": "",
+                        "plataformas": [
+                            {
+                                "descricao": "Telegram",
+                                "mensagem_has_plataforma": {
+                                    "mensagem_id": "34",
+                                    "plataforma_id": "5"
+                                }
+                            }
+                        ]
+                      }
+                    ],
+            "error": []
+        }
+
++ Request 400 (application/json)
+    + Attributes
+        + mensagem_id: 133 (number, optional)
+
++ Response 400 (application/json)
+
+        {
+            "apiVersion": "1.0",
+            "data": [],
+            "error": "No query results for model [App\\Models\\Mensagem] 133"
+        }
+
+## Editar Mensagem [/v1/mensagem/{id}]
+### Ediçao de Mensagem  [PATCH]
+* Para editar uma mensagem será preciso dos seguintes campos
++ Request 200 (application/json)
+    + Attributes
+        + mensagem_id: 34 (number, required)
+        + titulo: Outro Titulo (string, required)
+        + descricao: Descricao Atualizada (string, required)
+        + sistema_id: 1 (number, required)
+        + plataformas: [{ descricao: Telegram, mensagem_has_plataforma: {mensagem_id: 34, plataforma_id: 5}}] (array, required)
+
++ Response 200 (application/json)
+
+        {
+            "apiVersion": "1.0",
+            "data": 34,
+            "error": []
+        }
+
++ Request 400 (application/json)
+    + Attributes
+        + mensagem_id: 133 (number, optional)
+        + titulo: Outro Titulo (string, required)
+        + descricao: Descricao Atualizada (string, required)
+        + sistema_id: 1 (number, required)
+        + plataformas: [{ descricao: Telegram, mensagem_has_plataforma: {mensagem_id: 34, plataforma_id: 5}}] (array, required)
+
++ Response 400 (application/json)
+
+        {
+            "apiVersion": "1.0",
+            "data": [],
+            "error": "No query results for model [App\\Models\\Mensagem] 133"
+        }
+
+## Excluir Mensagem [/v1/notificacao/{id}]
+### Exclusao de Mensagem [DELETE]
+* Para a excluir uma mensagem será preciso dos seguintes campos
++ Request 200 (application/json)
+    + Attributes
+        + mensagem_id: 34 (number, required)
+
++ Response 200 (application/json)
+
+        {
+            "apiVersion": "1.0",
+            "data": true,
+            "error": []
+        }
+
++ Request 400 (application/json)
+    + Attributes
+        + notificacao_id: 133 (number, optional)
+
++ Response 400 (application/json)
+
+        {
+            "apiVersion": "1.0",
+            "data": [],
+            "error": "No query results for model [App\\Models\\Mensagem] 133"
+        }
