@@ -240,7 +240,7 @@ Serviço com responsabilidade de centralizar e disparar notificações de divers
 
         {
             "apiVersion": "1.0",
-            "data": 34,
+            "data": 1,
             "error": []
         }
 
@@ -260,7 +260,7 @@ Serviço com responsabilidade de centralizar e disparar notificações de divers
             "error": "No query results for model [App\\Models\\Mensagem] 133"
         }
 
-## Excluir Mensagem [/v1/notificacao/{id}]
+## Excluir Mensagem [/v1/mensagem/{id}]
 ### Exclusao de Mensagem [DELETE]
 * Para a excluir uma mensagem será preciso dos seguintes campos
 + Request 200 (application/json)
@@ -277,7 +277,7 @@ Serviço com responsabilidade de centralizar e disparar notificações de divers
 
 + Request 400 (application/json)
     + Attributes
-        + notificacao_id: 133 (number, optional)
+        + mensagem_id: 133 (number, optional)
 
 + Response 400 (application/json)
 
@@ -285,4 +285,131 @@ Serviço com responsabilidade de centralizar e disparar notificações de divers
             "apiVersion": "1.0",
             "data": [],
             "error": "No query results for model [App\\Models\\Mensagem] 133"
+        }
+
+## Adicionar Plataforma [/v1/plataforma]
+### Adiçao de Plataformas  [POST]
+* Para a adição de plataformas será preciso dos seguintes campos
++ Request 200 (application/json)
+    + Attributes
+        + descricao: Email (string, required)
+        + is_ativo: 1 (number, required)
+
++ Response 200 (application/json)
+
+        {
+            "apiVersion": "1.0",
+            "data": [
+                      {
+                        "descricao": "Email",
+                        "is_ativo": "1",
+                        "plataforma_id": "13",
+                      }
+                    ],
+            "error": []
+        }
+
++ Request 400 (application/json)
+    + Attributes
+        + is_ativo: 1 (number, required)
+
++ Response 400 (application/json)
+
+        {
+            "apiVersion": "1.0",
+            "data": [],
+            "error": "The descricao field is required."
+        }
+
+## Buscar Plataformas [/v1/plataforma[/{id}]]
+### Visualizaçao de Plataformas  [GET]
+* Para a visualizaçao de plataformas será preciso dos seguintes campos
++ Request 200 (application/json)
+    + Attributes
+        + plataforma_id: 13 (number, optional)
+
++ Response 200 (application/json)
+
+        {
+            "apiVersion": "1.0",
+            "data": [
+                      {
+                        "plataforma_id": "13",
+                        "descricao": "Email",
+                        "is_ativo": "1",
+                        "created_at": "2019-06-27 19:40:54",
+                        "updated_at": ""
+                      }
+                    ],
+            "error": []
+        }
+
++ Request 400 (application/json)
+    + Attributes
+        + plataforma_id: 133 (number, optional)
+
++ Response 400 (application/json)
+
+        {
+            "apiVersion": "1.0",
+            "data": [],
+            "error": "No query results for model [App\\Models\\Plataforma] 133"
+        }
+
+## Editar Plataforma [/v1/plataforma/{id}]
+### Ediçao de Plataforma  [PATCH]
+* Para editar uma plataforma será preciso dos seguintes campos
++ Request 200 (application/json)
+    + Attributes
+        + plataforma_id: 13 (number, required)
+        + descricao: Telegram (string, required)
+        + is_ativo: 0 (number, required)
+
++ Response 200 (application/json)
+
+        {
+            "apiVersion": "1.0",
+            "data": 1,
+            "error": []
+        }
+
++ Request 400 (application/json)
+    + Attributes
+        + plataforma_id: 133 (number, optional)
+        + descricao: Telegram (string, required)
+        + is_ativo: 0 (number, required)
+
++ Response 400 (application/json)
+
+        {
+            "apiVersion": "1.0",
+            "data": [],
+            "error": "No query results for model [App\\Models\\Plataforma] 133"
+        }
+
+## Excluir Plataforma [/v1/plataforma/{id}]
+### Exclusao de Plataforma [DELETE]
+* Para a excluir uma plataforma será preciso dos seguintes campos
++ Request 200 (application/json)
+    + Attributes
+        + plataforma_id: 13 (number, required)
+
++ Response 200 (application/json)
+
+        {
+            "apiVersion": "1.0",
+            "data": true,
+            "error": []
+        }
+
++ Request 400 (application/json)
+    + Attributes
+        + plataforma_id: 133 (number, optional)
+
++ Response 400 (application/json)
+
+        {
+            "apiVersion": "1.0",
+            "data": [],
+            "error": "No query results for model [App\\Models\\Plataforma] 133"
         }
